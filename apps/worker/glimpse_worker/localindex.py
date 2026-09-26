@@ -78,7 +78,7 @@ def build_index(
     files = iter_images(folder)
 
     def one(p: Path) -> tuple[str, datetime | None, list[npt.NDArray[np.float32]], int]:
-        decoded = decode(p.read_bytes())
+        decoded = decode(p.read_bytes(), max_edge=s.work_long_edge)
         work = to_bgr(resized(decoded.pil, s.work_long_edge))
         faces = analyze_faces(engine, work, s)
         embs = [f.embedding for f in faces if f.embedding is not None]

@@ -72,7 +72,9 @@ def main() -> int:
 
     def index_one(item: tuple[str, Path]) -> tuple[str, list[np.ndarray]]:
         _, f = item
-        work = to_bgr(resized(decode(f.read_bytes()).pil, s.work_long_edge))
+        work = to_bgr(
+            resized(decode(f.read_bytes(), max_edge=s.work_long_edge).pil, s.work_long_edge)
+        )
         return str(f), [
             x.embedding for x in analyze_faces(engine, work, s) if x.embedding is not None
         ]

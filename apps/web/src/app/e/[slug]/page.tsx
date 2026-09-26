@@ -48,6 +48,8 @@ export default async function EventLanding({ params, searchParams }: Props) {
         <img
           src={cover ?? "/marketing/frame-1.webp"}
           alt=""
+          fetchPriority="low"
+          decoding="async"
           className="size-full scale-105 object-cover opacity-70 blur-[1px] motion-safe:animate-develop"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/70 to-ink/20" />

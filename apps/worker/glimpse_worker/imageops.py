@@ -27,29 +27,37 @@ class ImageDecodeError(ValueError):
 
 @dataclass(frozen=True, slots=True)
 class DecodedImage:
-    pil: Image.Image  # RGB, orientation fixed
+    pil: Image.Image  # RGB, orientation fixed (possibly decoded at reduced scale, see `decode`)
     taken_at: datetime | None
-
-    @property
-    def width(self) -> int:
-        return self.pil.width
-
-    @property
-    def height(self) -> int:
-        return self.pil.height
+    width: int  # full-resolution, oriented
+    height: int
 
 
-def decode(data: bytes) -> DecodedImage:
+def decode(data: bytes, max_edge: int | None = None) -> DecodedImage:
+    """Decode + fix EXIF orientation. With `max_edge`, JPEGs are decoded at a reduced DCT scale
+    (never below `max_edge` on the long side): a 24 MP file decodes ~4x faster."""
     try:
         opened = Image.open(io.BytesIO(data))
+        full_w, full_h = opened.size
+        if max_edge and opened.format == "JPEG":
+            opened.draft("RGB", (max_edge, max_edge))
         opened.load()
     except Exception as exc:  # Pillow raises many types
         raise ImageDecodeError(f"cannot decode image: {exc}") from exc
     taken_at = _exif_taken_at(opened)
+    rotated = _exif_orientation(opened) in (5, 6, 7, 8)
     img: Image.Image = ImageOps.exif_transpose(opened) or opened
     if img.mode != "RGB":
         img = img.convert("RGB")
-    return DecodedImage(pil=img, taken_at=taken_at)
+    w, h = (full_h, full_w) if rotated else (full_w, full_h)
+    return DecodedImage(pil=img, taken_at=taken_at, width=w, height=h)
+
+
+def _exif_orientation(img: Image.Image) -> int:
+    try:
+        return int(img.getexif().get(0x0112, 1))
+    except Exception:
+        return 1
 
 
 def _exif_taken_at(img: Image.Image) -> datetime | None:
@@ -78,7 +86,9 @@ def resized(img: Image.Image, long_edge: int) -> Image.Image:
     if scale >= 1.0:
         return img
     return img.resize(
-        (max(1, round(w * scale)), max(1, round(h * scale))), Image.Resampling.LANCZOS
+        (max(1, round(w * scale)), max(1, round(h * scale))),
+        Image.Resampling.LANCZOS,
+        reducing_gap=3.0,
     )
 
 
@@ -99,7 +109,7 @@ def resize_bgr(img: BGRImage, long_edge: int) -> tuple[BGRImage, float]:
 
 def webp_bytes(img: Image.Image, quality: int) -> bytes:
     buf = io.BytesIO()
-    img.save(buf, format="WEBP", quality=quality, method=4)
+    img.save(buf, format="WEBP", quality=quality, method=2)
     return buf.getvalue()
 
 

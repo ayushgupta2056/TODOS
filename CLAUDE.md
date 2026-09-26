@@ -38,7 +38,7 @@ licenses/       third-party model licences
 
 ## Stack (all free)
 
-pnpm workspaces + Turborepo · Next.js App Router · Tailwind v4 + shadcn/ui (Radix) + Framer Motion + lucide-react · Geist / Geist Mono / Instrument Serif · Supabase (Postgres + pgvector + Auth magic link/Google + RLS + Realtime) · Cloudflare R2 (presigned multipart; MinIO locally) · Cloudflare Pages/Workers via `@opennextjs/cloudflare` (**not Vercel Hobby**, which forbids commercial use) · Python worker on an Oracle Always Free Ampere VM (Docker) · queue = Postgres `jobs` table + `SELECT … FOR UPDATE SKIP LOCKED` (no Redis) · Uppy + AWS S3 multipart → R2 · Razorpay Subscriptions (later, optional) · Resend (email) · Docker Compose for fully-offline local dev.
+pnpm workspaces + Turborepo · Next.js App Router · Tailwind v4 + shadcn/ui (Radix) + Framer Motion + lucide-react · Geist / Geist Mono / Instrument Serif · Supabase (Postgres + pgvector + Auth magic link/Google + RLS + Realtime) · Cloudflare R2 (presigned multipart; MinIO locally) · Cloudflare Pages/Workers via `@opennextjs/cloudflare` (**not Vercel Hobby**, which forbids commercial use) · Python worker on an Oracle Always Free Ampere VM (Docker) · queue = Postgres `jobs` table + `SELECT … FOR UPDATE SKIP LOCKED` (no Redis) · Uppy + AWS S3 multipart → R2 · Razorpay Subscriptions (later, optional) · Resend (email) · Docker Compose (SeaweedFS as the local S3) for fully-offline local dev.
 
 ## Data model essentials
 
@@ -83,9 +83,28 @@ Premium, cinematic, calm. Photos are the hero.
 
 ## Commands
 
-_Filled in during Phase 0 (install, dev, test, lint, typecheck, docker compose up, worker run)._
+```bash
+pnpm install                                   # JS deps (pnpm 10, Node 22)
+pnpm db:start / pnpm db:stop / pnpm db:reset   # local Supabase (packages/db), ports 54321-54324
+pnpm stack:up / pnpm stack:down                # SeaweedFS S3 on :8333 (add --profile worker for the worker container)
+pnpm --filter @glimpse/db gen:types            # regenerate DB types after a migration
+pnpm --filter @glimpse/web dev                 # web on :3000 (needs apps/web/.env.local)
+pnpm --filter @glimpse/web seed [photos-dir]   # demo studio/event + one-click sign-in link
+cd apps/worker && uv run glimpse-face serve --consume   # worker API :8787 + queue consumer
+cd apps/worker && uv run glimpse-face index|search|bench|models
+pnpm turbo run lint typecheck test             # everything (web, ui, db RLS, worker)
+cd apps/web && pnpm e2e                        # Playwright full flow (needs E2E_PHOTOS_DIR, E2E_SELFIE)
+pnpm --filter @glimpse/web cf:build            # Cloudflare Worker bundle (uses `next build --webpack`)
+```
+
+Gotchas:
+- Next 16: `proxy.ts` (not middleware), async `params`/`cookies()`. Read `apps/web/node_modules/next/dist/docs/` before using unfamiliar APIs.
+- Keep the Worker bundle under 3 MiB gzipped (free plan). Turbopack builds are too big, so builds use webpack.
+- Presigned uploads must not send `x-amz-meta-*` headers (Uppy `allowedMetaFields: false`).
+- Local S3 is SeaweedFS, because MinIO images are no longer on Docker Hub.
 
 ## Current status
 
-- [x] Brief read; `CLAUDE.md` + `docs/PLAN.md` written.
-- [ ] Waiting for **"Start Phase 1"**. Phase 0 (scaffold) hasn't been built yet; see the open questions in `docs/PLAN.md`.
+- [x] Phases 0–8 built and verified locally (2026-09-26). See `docs/phase-N.md` and `docs/PLAN.md` for remaining items.
+- Default match threshold is **0.42** (tuned on LFW). Re-tune on real event photos before launch.
+- Open: psycopg (LGPL-3.0) is used unmodified in the worker; confirm OK or switch to pg8000 (BSD).

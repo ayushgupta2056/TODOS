@@ -22,7 +22,7 @@ class Settings(BaseSettings):
     det_score_threshold: float = 0.7
     det_nms_threshold: float = 0.3
     # Long edge of the working copy used for alignment + tiling.
-    work_long_edge: int = 2400
+    work_long_edge: int = 2048
     # Long edge of the full-frame detection pass.
     detect_long_edge: int = 1600
     # "auto" tiles large images; "always" / "never" force it.

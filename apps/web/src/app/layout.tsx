@@ -1,21 +1,29 @@
 import { Toaster } from "@glimpse/ui";
-import { GeistMono } from "geist/font/mono";
-import { GeistSans } from "geist/font/sans";
 import type { Metadata, Viewport } from "next";
-import { Barlow_Condensed, Instrument_Serif } from "next/font/google";
+import { Instrument_Serif } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 
+const geistSans = localFont({
+  src: "../fonts/Geist-Variable.woff2",
+  variable: "--font-geist-sans",
+  weight: "100 900",
+  display: "swap",
+});
+// Mono is only used for small labels and counts: don't let it compete with the headline font.
+const geistMono = localFont({
+  src: "../fonts/GeistMono-Variable.woff2",
+  variable: "--font-geist-mono",
+  weight: "100 900",
+  display: "swap",
+  preload: false,
+  fallback: ["ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
+});
 const instrument = Instrument_Serif({
   subsets: ["latin"],
   weight: "400",
   style: ["normal", "italic"],
   variable: "--font-instrument-serif",
-  display: "swap",
-});
-const barlow = Barlow_Condensed({
-  subsets: ["latin"],
-  weight: ["500", "600"],
-  variable: "--font-barlow-condensed",
   display: "swap",
 });
 
@@ -43,7 +51,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       lang="en"
       data-theme="dark"
       suppressHydrationWarning
-      className={`${GeistSans.variable} ${GeistMono.variable} ${instrument.variable} ${barlow.variable}`}
+      className={`${geistSans.variable} ${geistMono.variable} ${instrument.variable}`}
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />

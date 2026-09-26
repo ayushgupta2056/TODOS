@@ -87,11 +87,13 @@ def process_photo_bytes(
     s: Settings,
     watermark_text: str | None = None,
 ) -> ProcessedPhoto:
-    decoded = decode(data)
+    decoded = decode(data, max_edge=max(s.web_long_edge, s.work_long_edge))
     img = decoded.pil
     web_img = resized(img, s.web_long_edge)
     thumb_img = resized(web_img, s.thumb_long_edge)
-    work = to_bgr(resized(img, s.work_long_edge))
+    # Reuse the web copy for detection when it is the same size: saves a full resize.
+    work_img = web_img if s.work_long_edge == s.web_long_edge else resized(img, s.work_long_edge)
+    work = to_bgr(work_img)
     return ProcessedPhoto(
         width=decoded.width,
         height=decoded.height,
@@ -131,7 +133,7 @@ def embed_selfie(data: bytes, engine: FaceEngine, s: Settings) -> SelfieEmbeddin
     """Selfie bytes -> one embedding, entirely in memory. Nothing here touches disk, storage or
     logs; the caller discards the bytes afterwards."""
     try:
-        decoded = decode(data)
+        decoded = decode(data, max_edge=1280)
     except ValueError as exc:
         raise SelfieError("bad_image", "We couldn't read that image. Try again.") from exc
     work = to_bgr(resized(decoded.pil, 1280))
