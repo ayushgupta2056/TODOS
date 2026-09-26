@@ -1,0 +1,13 @@
+pnpm-lock.yaml
+.next
+.open-next
+node_modules
+dist
+coverage
+apps/worker
+packages/db/supabase/.temp
+docs/PROMPT.md
+todos
+todolistapi
+authentication
+helpers

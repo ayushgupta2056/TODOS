@@ -1,0 +1,25 @@
+{
+  "name": "glimpse",
+  "private": true,
+  "packageManager": "pnpm@10.33.0",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "db:start": "pnpm --filter @glimpse/db start",
+    "db:stop": "pnpm --filter @glimpse/db stop",
+    "db:reset": "pnpm --filter @glimpse/db reset",
+    "stack:up": "docker compose -f infra/docker-compose.yml up -d",
+    "stack:down": "docker compose -f infra/docker-compose.yml down"
+  },
+  "devDependencies": {
+    "prettier": "^3.9.9",
+    "turbo": "^2.11.4",
+    "typescript": "5.9.3"
+  }
+}

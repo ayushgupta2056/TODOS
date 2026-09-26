@@ -1,0 +1,11 @@
+{
+  "name": "@glimpse/worker",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "uv run glimpse-face serve --consume --port 8787",
+    "lint": "uv run ruff check . && uv run ruff format --check .",
+    "typecheck": "uv run mypy",
+    "test": "uv run pytest -q"
+  }
+}

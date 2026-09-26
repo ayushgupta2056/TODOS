@@ -1,0 +1,37 @@
+# Local stack, fully offline once images are pulled.
+#   pnpm db:start        -> Supabase (Postgres+pgvector, Auth, Realtime, Mailpit) via the Supabase CLI
+#   pnpm stack:up        -> this file: S3 stand-in (SeaweedFS, Apache-2.0) + face worker
+# MinIO was the original plan, but its images are no longer published on Docker Hub, so we use
+# SeaweedFS's S3 gateway instead (same S3 API, permissive licence).
+name: glimpse
+services:
+  s3:
+    image: chrislusf/seaweedfs:latest
+    command: server -s3 -s3.config=/etc/seaweedfs/s3.json -dir=/data -volume.max=0
+    ports: ["8333:8333"]
+    volumes:
+      - ./seaweedfs-s3.json:/etc/seaweedfs/s3.json:ro
+      - s3data:/data
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:8333/healthz"]
+      interval: 5s
+      retries: 20
+
+  worker:
+    build: ../apps/worker
+    depends_on:
+      s3: { condition: service_started }
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@host.docker.internal:54322/postgres
+      S3_ENDPOINT: http://s3:8333
+      S3_REGION: us-east-1
+      S3_BUCKET: glimpse
+      S3_ACCESS_KEY_ID: glimpse
+      S3_SECRET_ACCESS_KEY: glimpse-secret
+      WORKER_TOKEN: dev-worker-token
+    ports: ["8787:8787"]
+    extra_hosts: ["host.docker.internal:host-gateway"]
+    profiles: ["worker"]
+
+volumes:
+  s3data:
