@@ -188,6 +188,19 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"rate_limits": {
+                  Row: {
+                    "hits": number,"key": string,"window_start": string
+                  }
+                  Insert: {
+                    "hits"?: number,"key": string,"window_start": string
+                  }
+                  Update: {
+                    "hits"?: number,"key"?: string,"window_start"?: string
+                  }
+                  Relationships: [
+                    
+                  ]
                 },"studios": {
                   Row: {
                     "brand_color": string,"brand_logo_key": string | null,"created_at": string,"id": string,"name": string,"owner_id": string,"plan": Database["public"]['Enums']["plan_tier"],"plan_renews_at": string | null,"plan_status": string,"razorpay_customer_id": string | null,"razorpay_subscription_id": string | null,"updated_at": string
@@ -226,7 +239,10 @@ isOneToOne: false
             [_ in never]: never
           }
           Functions: {
-            "my_studio_ids":
+            "hit_rate_limit":
+{ Args: { "p_key": string,"p_limit": number,"p_window_seconds": number }; Returns: boolean
+                           },
+"my_studio_ids":
 { Args: Record<PropertyKey, never>; Returns: string[]
                            },
 "refresh_event_stats":
@@ -237,10 +253,16 @@ isOneToOne: false
               "created": boolean,"photo_id": string
             }[]
                            },
+"request_event_deletion":
+{ Args: { "p_event_id": string,"p_reason": string }; Returns: undefined
+                           },
 "search_event_faces":
 { Args: { "p_cluster_threshold": number,"p_embedding": string,"p_engine_version": string,"p_event_id": string,"p_limit"?: number,"p_threshold": number }; Returns: {
               "photo_id": string,"score": number,"taken_at": string,"via_cluster": boolean
             }[]
+                           },
+"studio_storage_bytes":
+{ Args: { "p_studio_id": string }; Returns: number
                            }
           }
           Enums: {

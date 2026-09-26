@@ -1,0 +1,259 @@
+/*
+ * Darkroom — Glimpse design tokens.
+ * Import AFTER `@import "tailwindcss";` in the app stylesheet.
+ * Dark-first. Light theme via [data-theme="light"] (or system preference when data-theme="system").
+ */
+
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+:root,
+[data-theme="dark"] {
+  color-scheme: dark;
+  --ink: #0e0c0a;
+  --surface: #171411;
+  --raised: #201c18;
+  --line: #2e2823;
+  --line-strong: #463d35;
+  --paper: #f3ede4;
+  --muted: #a89e92;
+  --faint: #6f665d;
+  --amber: #ff8a3d;
+  --amber-hover: #ff9d5c;
+  --amber-press: #e97a30;
+  --amber-ink: #0e0c0a;
+  --amber-soft: rgb(255 138 61 / 0.12);
+  --red: #e5484d;
+  --red-soft: rgb(229 72 77 / 0.14);
+  --green: #46a758;
+  --green-soft: rgb(70 167 88 / 0.14);
+  --scrim: rgb(8 7 6 / 0.72);
+  --shadow-color: 0 0% 0%;
+  --grain-opacity: 0.07;
+}
+
+[data-theme="light"] {
+  color-scheme: light;
+  --ink: #f5efe6;
+  --surface: #fbf8f3;
+  --raised: #ffffff;
+  --line: #e4dacd;
+  --line-strong: #cdbfae;
+  --paper: #1a1613;
+  --muted: #62584e;
+  --faint: #8f8377;
+  --amber: #ff8a3d;
+  --amber-hover: #ff9d5c;
+  --amber-press: #e97a30;
+  --amber-ink: #0e0c0a;
+  --amber-soft: rgb(255 138 61 / 0.16);
+  --red: #c9363b;
+  --red-soft: rgb(201 54 59 / 0.1);
+  --green: #2f7d3f;
+  --green-soft: rgb(47 125 63 / 0.1);
+  --scrim: rgb(26 22 19 / 0.5);
+  --shadow-color: 30 20% 30%;
+  --grain-opacity: 0.045;
+}
+
+@theme inline {
+  --color-ink: var(--ink);
+  --color-surface: var(--surface);
+  --color-raised: var(--raised);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-paper: var(--paper);
+  --color-muted: var(--muted);
+  --color-faint: var(--faint);
+  --color-amber: var(--amber);
+  --color-amber-hover: var(--amber-hover);
+  --color-amber-press: var(--amber-press);
+  --color-amber-ink: var(--amber-ink);
+  --color-amber-soft: var(--amber-soft);
+  --color-red: var(--red);
+  --color-red-soft: var(--red-soft);
+  --color-green: var(--green);
+  --color-green-soft: var(--green-soft);
+  --color-scrim: var(--scrim);
+
+  --font-display: var(--font-instrument-serif), "Instrument Serif", ui-serif, Georgia, serif;
+  --font-condensed: var(--font-barlow-condensed), "Barlow Condensed", ui-sans-serif, sans-serif;
+  --font-sans: var(--font-geist-sans), "Geist", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), "Geist Mono", ui-monospace, monospace;
+}
+
+@theme {
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+
+  --text-display-xl: clamp(3.25rem, 8vw, 7.5rem);
+  --text-display-xl--line-height: 0.92;
+  --text-display-xl--letter-spacing: -0.03em;
+  --text-display-lg: clamp(2.5rem, 5.5vw, 4.75rem);
+  --text-display-lg--line-height: 0.98;
+  --text-display-lg--letter-spacing: -0.025em;
+  --text-display-md: clamp(2rem, 3.6vw, 3rem);
+  --text-display-md--line-height: 1.02;
+  --text-display-md--letter-spacing: -0.02em;
+
+  --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
+
+  --animate-develop: develop 400ms var(--ease-out-quint) both;
+  --animate-fade-up: fade-up 500ms var(--ease-out-quint) both;
+  --animate-scan: scan 1.8s var(--ease-in-out-quart) infinite;
+  --animate-shimmer: shimmer 1.6s linear infinite;
+
+  @keyframes develop {
+    from {
+      opacity: 0;
+      filter: blur(12px) saturate(0.4) brightness(1.15);
+    }
+    to {
+      opacity: 1;
+      filter: blur(0) saturate(1) brightness(1);
+    }
+  }
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  @keyframes scan {
+    0% {
+      transform: translateY(-10%);
+      opacity: 0;
+    }
+    15% {
+      opacity: 1;
+    }
+    85% {
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(1100%);
+      opacity: 0;
+    }
+  }
+  @keyframes shimmer {
+    from {
+      background-position: -200% 0;
+    }
+    to {
+      background-position: 200% 0;
+    }
+  }
+}
+
+@layer base {
+  html {
+    background: var(--ink);
+    color: var(--paper);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+  body {
+    background: var(--ink);
+    color: var(--paper);
+    font-family: var(--font-sans);
+    min-height: 100dvh;
+  }
+  ::selection {
+    background: var(--amber);
+    color: var(--amber-ink);
+  }
+  :focus-visible {
+    outline: 2px solid var(--amber);
+    outline-offset: 2px;
+  }
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+@layer components {
+  /* Film grain: a static SVG noise tile, composited softly over everything it wraps. */
+  .grain {
+    position: relative;
+    isolation: isolate;
+  }
+  .grain::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    opacity: var(--grain-opacity);
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 1.6 -0.3'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  }
+  /* Soft vignette for hero photos. */
+  .vignette {
+    position: relative;
+  }
+  .vignette::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    background: radial-gradient(ellipse at center, transparent 45%, rgb(8 7 6 / 0.65) 100%);
+  }
+  .skeleton {
+    background: linear-gradient(90deg, var(--surface) 0%, var(--raised) 50%, var(--surface) 100%);
+    background-size: 200% 100%;
+    animation: var(--animate-shimmer);
+  }
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes fade-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+@keyframes dialog-in {
+  from { opacity: 0; transform: translate(-50%, -48%) scale(0.97); }
+  to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+@keyframes sheet-right {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+@keyframes sheet-up {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+@keyframes toast-in {
+  from { opacity: 0; transform: translateY(12px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}

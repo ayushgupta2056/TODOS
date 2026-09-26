@@ -24,3 +24,4 @@ packages/db/supabase/.branches/
 test-results/
 playwright-report/
 .DS_Store
+apps/web/public/mediapipe/wasm/
