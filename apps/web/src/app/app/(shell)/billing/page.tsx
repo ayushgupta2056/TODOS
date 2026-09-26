@@ -28,7 +28,7 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
       <div className="grid gap-2">
         <p className="eyebrow">Plan &amp; usage</p>
         <h1 className="font-display text-display-md">
-          You&rsquo;re on <em className="text-amber">{usage.plan.name}</em>
+          You&rsquo;re on <em className="text-accent">{usage.plan.name}</em>
         </h1>
       </div>
       {sp.status === "pending" ? (

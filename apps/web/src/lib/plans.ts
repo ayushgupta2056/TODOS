@@ -4,10 +4,22 @@ import { supabaseAdmin } from "./supabase/server";
 
 export type Plan = Row<"plans">;
 
+// Mirrors the seed in packages/db migrations; used only if the DB is unreachable (e.g. CI builds).
+const FALLBACK_PLANS: Plan[] = [
+  { id: "trial", name: "Free trial", price_inr_monthly: 0, photos_per_month: 500, storage_gb: 2, active_events: 1, custom_branding: false, sort: 0 },
+  { id: "starter", name: "Starter", price_inr_monthly: 999, photos_per_month: 5000, storage_gb: 50, active_events: 3, custom_branding: false, sort: 1 },
+  { id: "pro", name: "Pro", price_inr_monthly: 2499, photos_per_month: 25000, storage_gb: 250, active_events: 10, custom_branding: true, sort: 2 },
+  { id: "studio", name: "Studio", price_inr_monthly: 5999, photos_per_month: 100000, storage_gb: 1000, active_events: null, custom_branding: true, sort: 3 },
+];
+
 export async function getPlans(): Promise<Plan[]> {
-  const { data, error } = await supabaseAdmin().from("plans").select("*").order("sort");
-  if (error) throw error;
-  return data;
+  try {
+    const { data, error } = await supabaseAdmin().from("plans").select("*").order("sort");
+    if (error || !data?.length) return FALLBACK_PLANS;
+    return data;
+  } catch {
+    return FALLBACK_PLANS;
+  }
 }
 
 export async function getPlan(tier: PlanTier): Promise<Plan> {

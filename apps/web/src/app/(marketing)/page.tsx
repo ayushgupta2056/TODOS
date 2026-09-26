@@ -49,7 +49,7 @@ export default function HomePage() {
           <ol className="grid gap-px overflow-hidden rounded-lg border border-line bg-line md:grid-cols-3">
             {steps.map((s) => (
               <li key={s.n} className="grid gap-4 bg-ink p-7 sm:p-8">
-                <span className="font-mono text-sm text-amber">{s.n}</span>
+                <span className="font-mono text-sm text-accent">{s.n}</span>
                 <h3 className="font-display text-3xl">{s.title}</h3>
                 <p className="text-muted">{s.body}</p>
               </li>
@@ -60,7 +60,7 @@ export default function HomePage() {
 
       <section className="border-t border-line">
         <div className="mx-auto grid max-w-7xl gap-12 px-4 py-24 sm:px-6 lg:grid-cols-2 lg:py-32">
-          <div className="vignette grain relative aspect-[4/3] overflow-hidden rounded-lg border border-line">
+          <div data-theme="dark" className="vignette grain relative aspect-[4/3] overflow-hidden rounded-lg border border-line bg-ink">
             <img src="/marketing/frame-6.webp" alt="" className="size-full object-cover" />
             <div className="absolute inset-0 z-[2] grid place-items-center">
               <p className="font-display text-display-md italic text-paper/90">Private by design.</p>
@@ -83,7 +83,7 @@ export default function HomePage() {
                 </li>
               ))}
             </ul>
-            <Link href="/privacy" className="text-sm text-amber underline-offset-4 hover:underline">
+            <Link href="/privacy" className="text-sm text-accent underline-offset-4 hover:underline">
               Read the privacy notice
             </Link>
           </div>
@@ -93,7 +93,7 @@ export default function HomePage() {
       <section className="border-t border-line">
         <div className="mx-auto grid max-w-7xl justify-items-start gap-8 px-4 py-24 sm:px-6 lg:py-32">
           <h2 className="max-w-3xl font-display text-display-lg">
-            Your next event, <em className="text-amber">delivered</em> before the guests get home.
+            Your next event, <em className="text-accent">delivered</em> before the guests get home.
           </h2>
           <div className="flex flex-wrap gap-3">
             <Button asChild size="lg">

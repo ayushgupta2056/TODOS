@@ -36,7 +36,7 @@ export function ConsentControls({ error }: { error?: string | undefined }) {
         <span
           aria-hidden
           className={cn(
-            "mt-0.5 grid size-5 shrink-0 place-items-center rounded-xs border peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-amber",
+            "mt-0.5 grid size-5 shrink-0 place-items-center rounded-xs border peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-accent",
             agreed ? "border-amber bg-amber text-amber-ink" : "border-line-strong",
           )}
         >

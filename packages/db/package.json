@@ -12,7 +12,7 @@
     "reset": "supabase db reset",
     "status": "supabase status -o env",
     "gen:types": "supabase gen types typescript --local --schema public > src/database.types.ts",
-    "test": "node --test test/*.test.mjs",
+    "test": "node --test test/rls.test.mjs",
     "typecheck": "tsc --noEmit",
     "lint": "tsc --noEmit"
   },

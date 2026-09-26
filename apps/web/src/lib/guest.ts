@@ -132,5 +132,6 @@ export function brandStyle(ev: PublicEvent): React.CSSProperties | undefined {
     ["--amber-press" as string]: ev.brand_color,
     ["--amber-ink" as string]: L > 0.35 ? "#0E0C0A" : "#FFFFFF",
     ["--amber-soft" as string]: `${ev.brand_color}22`,
+    ["--accent" as string]: ev.brand_color,
   };
 }

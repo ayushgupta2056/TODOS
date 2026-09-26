@@ -74,7 +74,8 @@ export function Gallery({
             role="dialog"
             aria-modal="true"
             aria-label={`Photo ${open! + 1} of ${photos.length}`}
-            className="fixed inset-0 z-50 flex flex-col bg-ink/97"
+            data-theme="dark"
+            className="fixed inset-0 z-50 flex flex-col bg-ink/97 text-paper"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}

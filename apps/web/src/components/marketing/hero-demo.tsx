@@ -33,7 +33,7 @@ export function HeroDemo() {
   }, [reduce]);
 
   return (
-    <div className="relative mx-auto w-full max-w-[640px] pr-[26%]" aria-hidden>
+    <div data-theme="dark" className="relative mx-auto w-full max-w-[640px] pr-[26%] text-paper" aria-hidden>
       <div className="grain vignette grid grid-cols-3 gap-2 overflow-hidden rounded-lg border border-line bg-surface p-2 sm:gap-2.5 sm:p-2.5">
         {FRAMES.map((src, i) => {
           const lit = phase !== "found" || MATCHED.has(i);
@@ -86,7 +86,7 @@ export function HeroDemo() {
                   {phase === "scan" && "Finding you…"}
                   {phase === "found" && (
                     <>
-                      You&rsquo;re in <span className="font-display text-lg italic text-amber">3</span> photos
+                      You&rsquo;re in <span className="font-display text-lg italic text-accent">3</span> photos
                     </>
                   )}
                 </motion.p>

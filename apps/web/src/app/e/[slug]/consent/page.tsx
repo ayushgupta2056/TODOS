@@ -39,7 +39,7 @@ export default async function ConsentPage({
       <ul className="mt-8 grid gap-5">
         {points.map((p) => (
           <li key={p.title} className="flex gap-4">
-            <span className="grid size-10 shrink-0 place-items-center rounded-full border border-line-strong text-amber">
+            <span className="grid size-10 shrink-0 place-items-center rounded-full border border-line-strong text-accent">
               <p.icon className="size-4" aria-hidden />
             </span>
             <div className="grid gap-0.5">

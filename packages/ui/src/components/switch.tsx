@@ -10,7 +10,7 @@ export function Switch({ className, ...props }: React.ComponentProps<typeof S.Ro
       className={cn(
         "relative inline-flex h-7 w-12 shrink-0 cursor-pointer items-center rounded-full border border-line-strong bg-raised",
         "transition-colors duration-200 data-[state=checked]:border-amber data-[state=checked]:bg-amber",
-        "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber disabled:opacity-50",
+        "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-50",
         // 44px hit area without changing visual size
         "before:absolute before:-inset-2 before:content-['']",
         className,

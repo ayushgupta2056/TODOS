@@ -37,7 +37,7 @@ export default async function LoginPage({
           </p>
         </main>
       </div>
-      <div className="vignette grain relative hidden overflow-hidden border-l border-line lg:block">
+      <div data-theme="dark" className="vignette grain relative hidden overflow-hidden border-l border-line bg-ink lg:block">
         <img src="/marketing/frame-2.webp" alt="" className="absolute inset-0 size-full object-cover" />
         <p className="absolute bottom-10 left-10 z-[2] max-w-sm font-display text-4xl italic leading-tight text-paper/90">
           &ldquo;Four thousand photos, and every guest found theirs before the cake was cut.&rdquo;

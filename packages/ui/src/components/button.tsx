@@ -8,7 +8,7 @@ export const buttonVariants = cva(
     "relative inline-flex select-none items-center justify-center gap-2 whitespace-nowrap font-medium",
     "transition-[background-color,color,border-color,transform,box-shadow] duration-150 ease-out-quint",
     "active:scale-[0.98] disabled:pointer-events-none disabled:opacity-45",
-    "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber",
+    "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
     "[&_svg]:size-4 [&_svg]:shrink-0",
   ],
   {
@@ -19,7 +19,7 @@ export const buttonVariants = cva(
         ghost: "text-muted hover:bg-raised hover:text-paper",
         outline: "border border-line-strong text-paper hover:border-paper/50",
         danger: "bg-red text-white hover:brightness-110",
-        link: "h-auto px-0 text-amber underline-offset-4 hover:underline",
+        link: "h-auto px-0 text-accent underline-offset-4 hover:underline",
       },
       size: {
         sm: "h-9 rounded-sm px-3 text-sm",

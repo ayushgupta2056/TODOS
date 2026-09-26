@@ -10,13 +10,14 @@ export function HeroHeadline({ face, className }: { face: DisplayFace; className
     return (
       <h1
         className={cn(
-          "font-condensed text-[clamp(3.2rem,8.5vw,7.6rem)] font-semibold uppercase leading-[0.88] tracking-[-0.01em]",
+          "font-condensed text-[clamp(3.2rem,8.5vw,7.6rem)] font-semibold uppercase tracking-[-0.01em]",
           className,
         )}
+        style={{ lineHeight: 0.9 }}
       >
         Every guest
         <br />
-        finds <span className="text-amber">themselves.</span>
+        finds <span className="text-accent">themselves.</span>
       </h1>
     );
   }
@@ -24,7 +25,7 @@ export function HeroHeadline({ face, className }: { face: DisplayFace; className
     <h1 className={cn("font-display text-display-xl", className)}>
       Every guest
       <br />
-      finds <em className="text-amber">themselves.</em>
+      finds <em className="text-accent">themselves.</em>
     </h1>
   );
 }

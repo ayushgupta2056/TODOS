@@ -22,6 +22,7 @@
   --amber-press: #e97a30;
   --amber-ink: #0e0c0a;
   --amber-soft: rgb(255 138 61 / 0.12);
+  --accent: #ff8a3d; /* amber used as TEXT / focus: must meet AA on --ink */
   --red: #e5484d;
   --red-soft: rgb(229 72 77 / 0.14);
   --green: #46a758;
@@ -46,6 +47,7 @@
   --amber-press: #e97a30;
   --amber-ink: #0e0c0a;
   --amber-soft: rgb(255 138 61 / 0.16);
+  --accent: #a84a0c; /* 5.0:1 on light ink */
   --red: #c9363b;
   --red-soft: rgb(201 54 59 / 0.1);
   --green: #2f7d3f;
@@ -69,6 +71,7 @@
   --color-amber-press: var(--amber-press);
   --color-amber-ink: var(--amber-ink);
   --color-amber-soft: var(--amber-soft);
+  --color-accent: var(--accent);
   --color-red: var(--red);
   --color-red-soft: var(--red-soft);
   --color-green: var(--green);
@@ -172,7 +175,7 @@
     color: var(--amber-ink);
   }
   :focus-visible {
-    outline: 2px solid var(--amber);
+    outline: 2px solid var(--accent);
     outline-offset: 2px;
   }
   .tabular {

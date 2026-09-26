@@ -68,7 +68,7 @@ export function Toaster() {
                 "mt-0.5 size-4 shrink-0",
                 t.tone === "success" && "text-green",
                 t.tone === "danger" && "text-red",
-                t.tone === "neutral" && "text-amber",
+                t.tone === "neutral" && "text-accent",
               )}
             />
             <div className="grid gap-0.5">

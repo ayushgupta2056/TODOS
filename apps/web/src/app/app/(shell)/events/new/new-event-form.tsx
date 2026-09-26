@@ -43,7 +43,7 @@ export function NewEventForm() {
                 visibility === o.v ? "border-amber bg-amber-soft" : "border-line-strong hover:border-muted/50",
               )}
             >
-              <o.icon className={cn("size-4", visibility === o.v ? "text-amber" : "text-muted")} aria-hidden />
+              <o.icon className={cn("size-4", visibility === o.v ? "text-accent" : "text-muted")} aria-hidden />
               <span className="text-sm font-medium">{o.title}</span>
               <span className="text-sm text-muted">{o.body}</span>
             </button>

@@ -25,7 +25,7 @@ export function NavLink({
         mobile
           ? "flex min-h-14 flex-col items-center justify-center gap-1 text-muted"
           : "flex h-10 items-center gap-2.5 rounded-md px-3 text-sm text-muted hover:bg-raised hover:text-paper",
-        active && (mobile ? "text-amber" : "bg-raised text-paper"),
+        active && (mobile ? "text-accent" : "bg-raised text-paper"),
       )}
     >
       {children}

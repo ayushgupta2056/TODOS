@@ -8,7 +8,7 @@ const badge = cva(
     variants: {
       tone: {
         neutral: "bg-raised text-muted ring-1 ring-inset ring-line-strong",
-        amber: "bg-amber-soft text-amber",
+        amber: "bg-amber-soft text-accent",
         success: "bg-green-soft text-green",
         danger: "bg-red-soft text-red",
       },

@@ -29,7 +29,7 @@ export default async function MyPhotosPage({ params }: { params: Promise<{ slug:
         <h1 className="font-display text-[clamp(2.5rem,9vw,4.5rem)] leading-[0.95]">
           {photos.length ? (
             <>
-              You&rsquo;re in <em className="text-amber">{formatCount(photos.length)}</em> photo{photos.length === 1 ? "" : "s"}
+              You&rsquo;re in <em className="text-accent">{formatCount(photos.length)}</em> photo{photos.length === 1 ? "" : "s"}
             </>
           ) : (
             "Your photos"

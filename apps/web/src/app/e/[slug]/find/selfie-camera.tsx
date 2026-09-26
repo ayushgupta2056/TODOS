@@ -213,7 +213,7 @@ export function SelfieCamera({ slug, eventName }: { slug: string; eventName: str
   const showCamera = phase === "starting" || phase === "live" || phase === "matching";
 
   return (
-    <div className="fixed inset-0 flex flex-col bg-ink">
+    <div data-theme="dark" className="fixed inset-0 flex flex-col bg-ink text-paper">
       {/* Viewfinder */}
       <div className="relative flex-1 overflow-hidden">
         <video
@@ -291,7 +291,7 @@ export function SelfieCamera({ slug, eventName }: { slug: string; eventName: str
               <p className="eyebrow">Found you</p>
               <h1 className="font-display text-5xl leading-none" aria-live="polite">
                 You&rsquo;re in
-                <span className="my-2 block text-[7rem] italic leading-none text-amber tabular">
+                <span className="my-2 block text-[7rem] italic leading-none text-accent tabular">
                   <Counter to={count} />
                 </span>
                 photo{count === 1 ? "" : "s"}
@@ -318,7 +318,7 @@ export function SelfieCamera({ slug, eventName }: { slug: string; eventName: str
       <div className="grid gap-4 border-t border-line bg-ink px-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] pt-4">
         {phase === "live" || phase === "starting" ? (
           <>
-            <p className={cn("text-center text-base transition-colors", ready ? "text-amber" : "text-paper")} aria-live="polite">
+            <p className={cn("text-center text-base transition-colors", ready ? "text-accent" : "text-paper")} aria-live="polite">
               {phase === "starting" ? "Opening camera…" : HINT_COPY[hint]}
             </p>
             <div className="flex items-center justify-center gap-8">

@@ -174,7 +174,7 @@ export function PhotoGrid({
                 <button
                   type="button"
                   onClick={() => onOpen(index)}
-                  className="block size-full overflow-hidden rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber"
+                  className="block size-full overflow-hidden rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
                   aria-label={`Open ${photo.alt}`}
                 >
                   <DevelopImage

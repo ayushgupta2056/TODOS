@@ -45,7 +45,7 @@ export function LoginForm({ next, initialError }: { next: string; initialError?:
   if (sentTo) {
     return (
       <div role="status" className="grid gap-4 rounded-lg border border-line bg-surface p-6">
-        <MailCheck aria-hidden className="size-6 text-amber" />
+        <MailCheck aria-hidden className="size-6 text-accent" />
         <div className="grid gap-1">
           <p className="font-medium">Check your inbox</p>
           <p className="text-sm text-muted">

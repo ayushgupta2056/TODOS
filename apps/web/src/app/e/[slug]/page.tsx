@@ -43,7 +43,7 @@ export default async function EventLanding({ params, searchParams }: Props) {
   const ready = ev.processed_count > 0;
 
   return (
-    <main className="relative flex min-h-dvh flex-col">
+    <main data-theme="dark" className="relative flex min-h-dvh flex-col bg-ink text-paper">
       <div className="vignette grain absolute inset-0 overflow-hidden">
         <img
           src={cover ?? "/marketing/frame-1.webp"}
