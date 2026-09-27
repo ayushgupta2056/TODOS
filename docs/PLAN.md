@@ -37,7 +37,7 @@ boxes below are what remains.
 - [x] `apps/web`: Next.js App Router + Tailwind v4 skeleton, `@opennextjs/cloudflare` adapter config, Zod-validated `env.ts`
 - [x] `apps/worker`: Python 3.12 project (`pyproject.toml`, uv or pip-tools), FastAPI `/healthz`, ruff + pytest + mypy, Dockerfile (multi-arch: amd64 + arm64 for the Oracle Ampere VM)
 - [x] `packages/db`: migrations folder wired to the Supabase CLI (`supabase/` config), type generation script
-- [x] Docker Compose: Supabase local stack (via the Supabase CLI), SeaweedFS (MinIO images unavailable) + bucket bootstrap, worker
+- [x] Docker Compose: Supabase local stack (via the Supabase CLI), MinIO (`bitnamilegacy/minio`; SeaweedFS as a fallback profile) + bucket bootstrap, worker
 - [x] `.env.example` for web and worker (no secrets committed), `.gitignore`, `.editorconfig`
 - [x] GitHub Actions CI: pnpm install → lint → typecheck → test (web), ruff → mypy → pytest (worker)
 - [x] `/licenses` + `NOTICE` skeleton
@@ -101,7 +101,7 @@ boxes below are what remains.
 - [x] Debounced `cluster_event` job
 - [x] Live processing panel via Supabase Realtime (uploaded / faces found / people detected, progress ring)
 - [x] Share panel: link + QR code
-- [x] Tests: sign/complete Zod validation, job idempotency (run twice → same face count), worker integration test against SeaweedFS + local Postgres
+- [x] Tests: sign/complete Zod validation, job idempotency (run twice → same face count), worker integration test against MinIO + local Postgres
 - [x] Screenshot loop + critique + a11y for the dashboard and upload screens
 - [x] `docs/phase-4.md`
 

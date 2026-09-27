@@ -10,7 +10,7 @@ apps/web        Next.js 16 (App Router): marketing, photographer dashboard, gues
 apps/worker     Python 3.12: YuNet + SFace face pipeline, Postgres job queue, selfie-embed API, CLI, eval
 packages/ui     "Darkroom" design system (tokens + components); the app uses only these
 packages/db     Supabase migrations (Postgres + pgvector + RLS), generated types, RLS tests
-infra           Docker Compose: SeaweedFS (S3 stand-in) + worker container
+infra           Docker Compose: MinIO (R2 stand-in) + worker container
 ```
 
 The repo root also still contains an older, unrelated Django todo API (`manage.py`, `todos/`, …). It isn't
@@ -23,7 +23,7 @@ Prerequisites: Node 22 + pnpm 10, Python 3.12 + [uv](https://docs.astral.sh/uv/)
 ```bash
 pnpm install
 pnpm db:start                       # Supabase: Postgres+pgvector, Auth, Realtime, Mailpit (54321-54324)
-pnpm stack:up                       # SeaweedFS S3 on :8333
+pnpm stack:up                       # MinIO S3 on :9000 (console :9001, glimpse / glimpse-secret)
 cp apps/web/.env.example apps/web/.env.local     # paste anon + service keys from `pnpm --filter @glimpse/db status`
 cp apps/worker/.env.example apps/worker/.env
 

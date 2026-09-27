@@ -1,7 +1,8 @@
-"""S3-compatible object storage (Cloudflare R2 in production, SeaweedFS locally)."""
+"""S3-compatible object storage (Cloudflare R2 in production, MinIO locally)."""
 
 from __future__ import annotations
 
+import contextlib
 from functools import lru_cache
 from typing import Any
 
@@ -73,6 +74,12 @@ def ensure_bucket(cors_origins: list[str]) -> None:
         c.head_bucket(Bucket=bucket)
     except Exception:
         c.create_bucket(Bucket=bucket)
+    # MinIO has no bucket-CORS API; there it is configured via MINIO_API_CORS_ALLOW_ORIGIN.
+    with contextlib.suppress(Exception):
+        _put_cors(c, bucket, cors_origins)
+
+
+def _put_cors(c: Any, bucket: str, cors_origins: list[str]) -> None:
     c.put_bucket_cors(
         Bucket=bucket,
         CORSConfiguration={

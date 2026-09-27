@@ -38,7 +38,7 @@ licenses/       third-party model licences
 
 ## Stack (all free)
 
-pnpm workspaces + Turborepo · Next.js App Router · Tailwind v4 + shadcn/ui (Radix) + Framer Motion + lucide-react · Geist / Geist Mono / Instrument Serif · Supabase (Postgres + pgvector + Auth magic link/Google + RLS + Realtime) · Cloudflare R2 (presigned multipart; MinIO locally) · Cloudflare Pages/Workers via `@opennextjs/cloudflare` (**not Vercel Hobby**, which forbids commercial use) · Python worker on an Oracle Always Free Ampere VM (Docker) · queue = Postgres `jobs` table + `SELECT … FOR UPDATE SKIP LOCKED` (no Redis) · Uppy + AWS S3 multipart → R2 · Razorpay Subscriptions (later, optional) · Resend (email) · Docker Compose (SeaweedFS as the local S3) for fully-offline local dev.
+pnpm workspaces + Turborepo · Next.js App Router · Tailwind v4 + shadcn/ui (Radix) + Framer Motion + lucide-react · Geist / Geist Mono / Instrument Serif · Supabase (Postgres + pgvector + Auth magic link/Google + RLS + Realtime) · Cloudflare R2 (presigned multipart; MinIO locally) · Cloudflare Pages/Workers via `@opennextjs/cloudflare` (**not Vercel Hobby**, which forbids commercial use) · Python worker on an Oracle Always Free Ampere VM (Docker) · queue = Postgres `jobs` table + `SELECT … FOR UPDATE SKIP LOCKED` (no Redis) · Uppy + AWS S3 multipart → R2 · Razorpay Subscriptions (later, optional) · Resend (email) · Docker Compose (MinIO as the local S3) for fully-offline local dev.
 
 ## Data model essentials
 
@@ -86,7 +86,7 @@ Premium, cinematic, calm. Photos are the hero.
 ```bash
 pnpm install                                   # JS deps (pnpm 10, Node 22)
 pnpm db:start / pnpm db:stop / pnpm db:reset   # local Supabase (packages/db), ports 54321-54324
-pnpm stack:up / pnpm stack:down                # SeaweedFS S3 on :8333 (add --profile worker for the worker container)
+pnpm stack:up / pnpm stack:down                # MinIO S3 on :9000, console :9001 (add --profile worker for the worker container)
 pnpm --filter @glimpse/db gen:types            # regenerate DB types after a migration
 pnpm --filter @glimpse/web dev                 # web on :3000 (needs apps/web/.env.local)
 pnpm --filter @glimpse/web seed [photos-dir]   # demo studio/event + one-click sign-in link
@@ -101,7 +101,7 @@ Gotchas:
 - Next 16: `proxy.ts` (not middleware), async `params`/`cookies()`. Read `apps/web/node_modules/next/dist/docs/` before using unfamiliar APIs.
 - Keep the Worker bundle under 3 MiB gzipped (free plan). Turbopack builds are too big, so builds use webpack.
 - Presigned uploads must not send `x-amz-meta-*` headers (Uppy `allowedMetaFields: false`).
-- Local S3 is SeaweedFS, because MinIO images are no longer on Docker Hub.
+- Local S3 is MinIO via the frozen `bitnamilegacy/minio` image (official MinIO images are no longer pullable). MinIO has no bucket-CORS API: CORS comes from `MINIO_API_CORS_ALLOW_ORIGIN`. Fallback: `--profile seaweedfs` (:8333).
 
 ## Current status
 

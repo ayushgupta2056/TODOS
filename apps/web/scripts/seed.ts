@@ -51,7 +51,8 @@ async function ensureBucket(): Promise<void> {
   if (head.status === 404) await s3.fetch(bucketUrl, { method: "PUT" });
   const cors = `<CORSConfiguration><CORSRule><AllowedOrigin>${APP}</AllowedOrigin><AllowedOrigin>http://127.0.0.1:3000</AllowedOrigin><AllowedMethod>GET</AllowedMethod><AllowedMethod>PUT</AllowedMethod><AllowedMethod>POST</AllowedMethod><AllowedMethod>HEAD</AllowedMethod><AllowedHeader>*</AllowedHeader><ExposeHeader>ETag</ExposeHeader><MaxAgeSeconds>3600</MaxAgeSeconds></CORSRule></CORSConfiguration>`;
   const md5 = createHash("md5").update(cors).digest("base64");
-  await s3.fetch(`${bucketUrl}?cors`, { method: "PUT", body: cors, headers: { "content-md5": md5, "content-type": "application/xml" } });
+  // R2/SeaweedFS accept bucket CORS; MinIO answers NotImplemented and uses MINIO_API_CORS_ALLOW_ORIGIN instead.
+  await s3.fetch(`${bucketUrl}?cors`, { method: "PUT", body: cors, headers: { "content-md5": md5, "content-type": "application/xml" } }).catch(() => undefined);
 }
 
 async function main(): Promise<void> {

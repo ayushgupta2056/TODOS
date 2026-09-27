@@ -52,7 +52,7 @@ class Settings(BaseSettings):
 
     # --- infrastructure ---------------------------------------------------
     database_url: str = "postgresql://postgres:postgres@127.0.0.1:54322/postgres"
-    s3_endpoint: str = "http://127.0.0.1:8333"
+    s3_endpoint: str = "http://127.0.0.1:9000"
     s3_region: str = "us-east-1"  # R2 accepts "auto" or "us-east-1"
     s3_bucket: str = "glimpse"
     s3_access_key_id: str = "glimpse"

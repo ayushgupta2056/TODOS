@@ -29,7 +29,7 @@ jobs:
           NEXT_PUBLIC_SUPABASE_URL: http://127.0.0.1:54321
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ci-placeholder-anon-key-000000
           SUPABASE_SERVICE_ROLE_KEY: ci-placeholder-service-key-000000
-          S3_ENDPOINT: http://127.0.0.1:8333
+          S3_ENDPOINT: http://127.0.0.1:9000
           S3_BUCKET: glimpse
           S3_ACCESS_KEY_ID: ci
           S3_SECRET_ACCESS_KEY: ci
@@ -65,8 +65,8 @@ jobs:
       - name: Start Supabase
         working-directory: packages/db
         run: supabase start -x studio,imgproxy,edge-runtime,logflare,vector,supavisor
-      - name: Start S3 (SeaweedFS)
-        run: docker compose -f infra/docker-compose.yml up -d s3 && sleep 8
+      - name: Start S3 (MinIO)
+        run: docker compose -f infra/docker-compose.yml up -d --wait s3
       - name: RLS tests
         run: pnpm --filter @glimpse/db test
       - name: Worker integration tests

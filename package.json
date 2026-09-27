@@ -14,7 +14,7 @@
     "db:start": "pnpm --filter @glimpse/db start",
     "db:stop": "pnpm --filter @glimpse/db stop",
     "db:reset": "pnpm --filter @glimpse/db reset",
-    "stack:up": "docker compose -f infra/docker-compose.yml up -d",
+    "stack:up": "docker compose -f infra/docker-compose.yml up -d --wait",
     "stack:down": "docker compose -f infra/docker-compose.yml down"
   },
   "devDependencies": {
