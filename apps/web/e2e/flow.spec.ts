@@ -58,7 +58,9 @@ test("photographer uploads → worker processes → guest finds themselves", asy
   await expect(guest.getByText(/You.re in/)).toBeVisible({ timeout: 30_000 });
   await guest.getByRole("link", { name: /See your photos/ }).click();
   await expect(guest).toHaveURL(/\/me$/);
+  // /me streams: the loading skeleton shows first, then the justified grid measures and renders.
   const tiles = guest.getByRole("button", { name: /^Open Photo \d+ of/ });
+  await expect(tiles.first()).toBeVisible({ timeout: 15_000 });
   expect(await tiles.count()).toBeGreaterThan(0);
 
   // ZIP streams

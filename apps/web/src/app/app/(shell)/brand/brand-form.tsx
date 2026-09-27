@@ -30,7 +30,7 @@ export function BrandForm({ name, color, custom }: { name: string; color: string
                 value={c}
                 disabled={!custom}
                 onChange={(e) => setC(e.target.value)}
-                className="size-11 cursor-pointer rounded-md border border-line-strong bg-surface p-1 disabled:cursor-not-allowed"
+                className="size-11 cursor-pointer rounded-md border border-control bg-surface p-1 disabled:cursor-not-allowed"
               />
               <Input id="brand_color" name="brand_color" value={c} onChange={(e) => setC(e.target.value)} disabled={!custom} className="max-w-36 font-mono uppercase" />
               {!custom ? <Badge tone="amber">Pro &amp; Studio</Badge> : null}

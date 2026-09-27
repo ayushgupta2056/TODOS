@@ -1,4 +1,4 @@
-import { Badge, cn } from "@glimpse/ui";
+import { Badge, cn, fixed } from "@glimpse/ui";
 import { ExternalLink } from "lucide-react";
 import Link from "next/link";
 import QRCode from "qrcode";
@@ -38,7 +38,7 @@ export default async function EventPage({
   const url = `${env().APP_URL}/e/${ev.slug}`;
   const [uploadToken, qrSvg] = await Promise.all([
     mintUploadToken(ev.studio_id, ev.id),
-    QRCode.toString(url, { type: "svg", margin: 1, errorCorrectionLevel: "M", color: { dark: "#0E0C0A", light: "#F3EDE4" } }),
+    QRCode.toString(url, { type: "svg", margin: 1, errorCorrectionLevel: "M", color: { dark: fixed.printInk, light: fixed.printPaper } }),
   ]);
 
   return (

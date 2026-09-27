@@ -2,6 +2,7 @@ import "server-only";
 import type React from "react";
 import type { Row } from "@glimpse/db";
 import { cookies, headers } from "next/headers";
+import { fixed } from "@glimpse/ui/tokens";
 import { env } from "./env";
 import { sha256Hex, signToken, verifyToken } from "./crypto";
 import { supabaseAdmin } from "./supabase/server";
@@ -54,7 +55,7 @@ export async function getPublicEvent(slug: string): Promise<PublicEvent | null> 
   return {
     ...ev,
     studio_name: studios.name,
-    brand_color: custom ? studios.brand_color : "#FF8A3D",
+    brand_color: custom ? studios.brand_color : fixed.brandAccent,
     brand_logo_key: custom ? studios.brand_logo_key : null,
     custom_branding: custom,
   };
@@ -121,7 +122,7 @@ export async function getGuestMatches(eventId: string): Promise<GuestMatches | n
 
 /** Accent override for studios with custom branding. Picks readable text on the accent. */
 export function brandStyle(ev: PublicEvent): React.CSSProperties | undefined {
-  if (!ev.custom_branding || ev.brand_color.toUpperCase() === "#FF8A3D") return undefined;
+  if (!ev.custom_branding || ev.brand_color.toLowerCase() === fixed.brandAccent) return undefined;
   const hex = ev.brand_color.replace("#", "");
   const [r, g, b] = [0, 2, 4].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255) as [number, number, number];
   const lin = (c: number) => (c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4);
@@ -130,7 +131,7 @@ export function brandStyle(ev: PublicEvent): React.CSSProperties | undefined {
     ["--amber" as string]: ev.brand_color,
     ["--amber-hover" as string]: ev.brand_color,
     ["--amber-press" as string]: ev.brand_color,
-    ["--amber-ink" as string]: L > 0.35 ? "#0E0C0A" : "#FFFFFF",
+    ["--amber-ink" as string]: L > 0.35 ? fixed.onLightAccent : fixed.onDarkAccent,
     ["--amber-soft" as string]: `${ev.brand_color}22`,
     ["--accent" as string]: ev.brand_color,
   };

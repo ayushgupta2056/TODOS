@@ -60,7 +60,7 @@ export function NewEventForm() {
           id="expires_in_days"
           name="expires_in_days"
           defaultValue="90"
-          className="h-11 max-w-56 rounded-md border border-line-strong bg-surface px-3 text-[0.95rem] text-paper focus-visible:border-amber focus-visible:outline-none"
+          className="h-11 max-w-56 rounded-md border border-control bg-surface px-3 text-[0.95rem] text-paper focus-visible:border-amber focus-visible:outline-none"
         >
           <option value="30">30 days</option>
           <option value="90">90 days</option>

@@ -56,7 +56,7 @@ export function SettingsForm({ event, deleteMismatch }: { event: Row<"events">; 
                   name="visibility"
                   value={visibility}
                   onChange={(e) => setVisibility(e.target.value as "public" | "pin")}
-                  className="h-11 rounded-md border border-line-strong bg-surface px-3 text-[0.95rem] focus-visible:border-amber focus-visible:outline-none"
+                  className="h-11 rounded-md border border-control bg-surface px-3 text-[0.95rem] focus-visible:border-amber focus-visible:outline-none"
                 >
                   <option value="public">Anyone with the link</option>
                   <option value="pin">Link + PIN</option>

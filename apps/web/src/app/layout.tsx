@@ -1,4 +1,4 @@
-import { Toaster } from "@glimpse/ui";
+import { fixed, Toaster } from "@glimpse/ui";
 import type { Metadata, Viewport } from "next";
 import { Instrument_Serif } from "next/font/google";
 import localFont from "next/font/local";
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0E0C0A",
+  themeColor: fixed.themeColor,
   colorScheme: "dark light",
   width: "device-width",
   initialScale: 1,

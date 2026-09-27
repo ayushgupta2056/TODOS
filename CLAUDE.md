@@ -65,6 +65,7 @@ Premium, cinematic, calm. Photos are the hero.
 - A11y: WCAG AA, visible focus rings, keyboard-operable, alt text, 44px touch targets. Mobile-first for guests, desktop-first for photographers.
 - **Screenshot loop:** every UI screen at 390px and 1440px, in both themes, reviewed before calling it done.
 - Design skills workflow is in `docs/PROMPT.md` §6b. Record the decisions in `docs/design-decisions.md`.
+- The `ui-ux-pro-max` skill pack is enabled in `.claude/settings.json`. Its adopted system lives in `design-system/glimpse/MASTER.md` (read it before designing a page; never `--persist --force` over it). Run `validate-tokens.cjs` (design-system skill) before shipping UI.
 
 ## Code rules
 

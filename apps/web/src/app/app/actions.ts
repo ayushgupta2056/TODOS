@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { fixed } from "@glimpse/ui/tokens";
 import { z } from "zod";
 import { getStudio, getUser, requireOwnedEvent, requireStudio } from "@/lib/auth";
 import { hashPin } from "@/lib/crypto";
@@ -172,7 +173,7 @@ export async function deletePhoto(form: FormData): Promise<void> {
 
 const BrandSchema = z.object({
   name: z.string().trim().min(2).max(80),
-  brand_color: z.string().regex(/^#[0-9A-Fa-f]{6}$/, "Use a hex colour like #FF8A3D"),
+  brand_color: z.string().regex(/^#[0-9A-Fa-f]{6}$/, `Use a hex colour like ${fixed.brandAccent.toUpperCase()}`),
 });
 
 export async function updateBrand(_: ActionState, form: FormData): Promise<ActionState> {

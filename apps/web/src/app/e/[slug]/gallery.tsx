@@ -123,7 +123,8 @@ export function Gallery({
                 imgClassName="max-h-[calc(100dvh-7rem)] w-auto object-contain"
               />
             </motion.div>
-            <div className="pointer-events-none absolute inset-y-0 left-0 right-0 hidden items-center justify-between px-4 sm:flex">
+            {/* Always visible: swipe is a convenience, never the only way (WCAG 2.2 dragging movements). */}
+            <div className="pointer-events-none absolute inset-y-0 left-0 right-0 flex items-center justify-between px-2 sm:px-4">
               <button type="button" onClick={() => go(-1)} className="pointer-events-auto grid size-12 place-items-center rounded-full bg-raised/70 text-paper hover:bg-raised" aria-label="Previous photo">
                 <ChevronLeft className="size-5" />
               </button>

@@ -46,8 +46,8 @@ boxes below are what remains.
 
 ## Phase 1 — Design system ("Darkroom")
 
-- [ ] Brand pass (`brand`/`brandkit`) — *skill not available here; done by hand (logo mark, voice, tokens). Re-run with the skill locally.*: name check, logo mark (monochrome, restrained), voice, tokens
-- [ ] *(skill not available)* `ui-ux-pro-max`: `search.py "premium photography gallery dark cinematic" --design-system`, `--domain typography`, `--domain ux`. Shortlist 2–3 font pairings and check the palette. Adopt only what fits Darkroom.
+- [x] Brand pass with the `brand` skill → `docs/brand-guidelines.md` (parsed by `inject-brand-context.cjs`); logo checked against the `design` skill's logo brief: name check, logo mark (monochrome, restrained), voice, tokens
+- [x] `ui-ux-pro-max` (installed 2026-09-27; results + decisions in design-decisions.md; MASTER at `design-system/glimpse/MASTER.md`): `search.py "premium photography gallery dark cinematic" --design-system`, `--domain typography`, `--domain ux`. Shortlist 2–3 font pairings and check the palette. Adopt only what fits Darkroom.
 - [x] Tokens as CSS variables → Tailwind v4 `@theme`: dark-first + light theme, amber primary, semantic colours, radii, spacing, shadows, motion (durations, easings, springs)
 - [x] Fonts: Instrument Serif, Geist Sans, Geist Mono (self-hosted via `next/font`), plus Barlow Condensed as the alternative
 - [x] Landing hero built in **both** display faces, side by side, for the user to choose

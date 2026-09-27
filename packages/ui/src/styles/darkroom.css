@@ -6,26 +6,57 @@
 
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
+/* ---- Layer 1: primitives (raw values, theme-independent). Mirrored in src/tokens.ts. ---- */
+:root {
+  --dr-ink-950: #0e0c0a;
+  --dr-ink-900: #171411;
+  --dr-ink-850: #201c18;
+  --dr-ink-800: #2e2823;
+  --dr-ink-700: #463d35;
+  --dr-ink-600: #1a1613;
+  --dr-stone-600: #62584e;
+  --dr-stone-500: #726860;
+  --dr-stone-450: #6f665d;
+  --dr-stone-400: #8f8377;
+  --dr-stone-300: #a89e92;
+  --dr-paper-50: #ffffff;
+  --dr-paper-100: #fbf8f3;
+  --dr-paper-150: #f5efe6;
+  --dr-paper-200: #f3ede4;
+  --dr-paper-300: #e4dacd;
+  --dr-paper-400: #cdbfae;
+  --dr-amber-400: #ff9d5c;
+  --dr-amber-500: #ff8a3d;
+  --dr-amber-600: #e97a30;
+  --dr-amber-800: #a84a0c;
+  --dr-red-500: #e5484d;
+  --dr-red-600: #c9363b;
+  --dr-green-500: #46a758;
+  --dr-green-700: #2f7d3f;
+}
+
+/* ---- Layer 2: semantic tokens (what each colour is FOR), per theme. ---- */
 :root,
 [data-theme="dark"] {
   color-scheme: dark;
-  --ink: #0e0c0a;
-  --surface: #171411;
-  --raised: #201c18;
-  --line: #2e2823;
-  --line-strong: #463d35;
-  --paper: #f3ede4;
-  --muted: #a89e92;
-  --faint: #6f665d;
-  --amber: #ff8a3d;
-  --amber-hover: #ff9d5c;
-  --amber-press: #e97a30;
-  --amber-ink: #0e0c0a;
+  --ink: var(--dr-ink-950);
+  --surface: var(--dr-ink-900);
+  --raised: var(--dr-ink-850);
+  --line: var(--dr-ink-800);
+  --line-strong: var(--dr-ink-700);
+  --control: var(--dr-stone-500); /* form-control boundaries: >=3:1 on ink/surface/raised (WCAG 1.4.11) */
+  --paper: var(--dr-paper-200);
+  --muted: var(--dr-stone-300);
+  --faint: var(--dr-stone-450);
+  --amber: var(--dr-amber-500);
+  --amber-hover: var(--dr-amber-400);
+  --amber-press: var(--dr-amber-600);
+  --amber-ink: var(--dr-ink-950);
   --amber-soft: rgb(255 138 61 / 0.12);
-  --accent: #ff8a3d; /* amber used as TEXT / focus: must meet AA on --ink */
-  --red: #e5484d;
+  --accent: var(--dr-amber-500); /* amber used as TEXT / focus: must meet AA on --ink */
+  --red: var(--dr-red-500);
   --red-soft: rgb(229 72 77 / 0.14);
-  --green: #46a758;
+  --green: var(--dr-green-500);
   --green-soft: rgb(70 167 88 / 0.14);
   --scrim: rgb(8 7 6 / 0.72);
   --shadow-color: 0 0% 0%;
@@ -34,35 +65,39 @@
 
 [data-theme="light"] {
   color-scheme: light;
-  --ink: #f5efe6;
-  --surface: #fbf8f3;
-  --raised: #ffffff;
-  --line: #e4dacd;
-  --line-strong: #cdbfae;
-  --paper: #1a1613;
-  --muted: #62584e;
-  --faint: #8f8377;
-  --amber: #ff8a3d;
-  --amber-hover: #ff9d5c;
-  --amber-press: #e97a30;
-  --amber-ink: #0e0c0a;
+  --ink: var(--dr-paper-150);
+  --surface: var(--dr-paper-100);
+  --raised: var(--dr-paper-50);
+  --line: var(--dr-paper-300);
+  --line-strong: var(--dr-paper-400);
+  --control: var(--dr-stone-400); /* >=3.2:1 on light ink/surface/raised */
+  --paper: var(--dr-ink-600);
+  --muted: var(--dr-stone-600);
+  --faint: var(--dr-stone-400);
+  --amber: var(--dr-amber-500);
+  --amber-hover: var(--dr-amber-400);
+  --amber-press: var(--dr-amber-600);
+  --amber-ink: var(--dr-ink-950);
   --amber-soft: rgb(255 138 61 / 0.16);
-  --accent: #a84a0c; /* 5.0:1 on light ink */
-  --red: #c9363b;
+  --accent: var(--dr-amber-800); /* 5.0:1 on light ink */
+  --red: var(--dr-red-600);
   --red-soft: rgb(201 54 59 / 0.1);
-  --green: #2f7d3f;
+  --green: var(--dr-green-700);
   --green-soft: rgb(47 125 63 / 0.1);
   --scrim: rgb(26 22 19 / 0.5);
   --shadow-color: 30 20% 30%;
   --grain-opacity: 0.045;
 }
 
+/* ---- Layer 3: components consume semantic tokens through Tailwind utilities below.
+   Per-studio branding overrides --amber* / --accent on a wrapper (see apps/web lib/guest.ts). ---- */
 @theme inline {
   --color-ink: var(--ink);
   --color-surface: var(--surface);
   --color-raised: var(--raised);
   --color-line: var(--line);
   --color-line-strong: var(--line-strong);
+  --color-control: var(--control);
   --color-paper: var(--paper);
   --color-muted: var(--muted);
   --color-faint: var(--faint);
@@ -169,6 +204,15 @@
     color: var(--paper);
     font-family: var(--font-sans);
     min-height: 100dvh;
+  }
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  [role="radio"],
+  [role="switch"],
+  label[for],
+  select,
+  summary {
+    cursor: pointer;
   }
   ::selection {
     background: var(--amber);

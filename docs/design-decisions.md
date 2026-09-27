@@ -4,12 +4,36 @@ Live reference: `/design` (every token and component, both themes). Code: `packa
 
 ## Process note (skills)
 
-The design skills named in the brief (§6b: `brand`, `ui-ux-pro-max`, `design-taste-frontend`,
-`emil-design-eng`, `imagegen-frontend-*`, `design:*` …) were **not installed in the cloud session** that
-built this. Their steps were applied by hand, using the same principles: restraint over decoration, photos
-as the hero, motion as craft, and a screenshot → critique → fix loop at 390px and 1440px in both themes.
-When those skills are available (e.g. in your local Claude Code), run the Phase 1/5 rows of §6b as a
-second pass. This document records what they should check against.
+**Pass 1 (2026-09-26):** the §6b skills weren't installed in the cloud session, so their principles were applied by hand.
+
+**Pass 2 (2026-09-27): the `ui-ux-pro-max` skill pack was installed and used.** It came from
+`nextlevelbuilder/ui-ux-pro-max-skill` (MIT, commit 823b0a1), and is enabled for this repo in `.claude/settings.json`,
+the same way as branch `claude/install-ui-ux-skill-2omnxf` in `oibsip_task2`. Skills used: `ui-ux-pro-max`, `design-system`,
+`brand`, `design` (logo brief), plus a `ui-styling` reference check. Results, following the brief's rule that
+"taste and Darkroom override the lookup database":
+
+| Skill step | Suggested | Decision |
+|---|---|---|
+| `search.py "premium photography gallery dark cinematic" --design-system` | Swiss minimal, pure black + white, zinc greys, white accent, Inter | **Rejected**: cold and generic, and it loses the warmth. Kept Darkroom. Adopted its "avoid heavy text / poor image showcase" and its pre-delivery checklist |
+| same, motion | Stagger with `back.out(1.4)` | **Rejected**: overshoot is on the anti-goal list |
+| `--domain typography` | Playfair Display + Inter, Cormorant + Montserrat | Shortlisted and recorded. Instrument Serif stays (more contemporary, better italic) |
+| `--domain color` (wedding) | Pink #DB2777 wedding palette | **Rejected**: vibrant |
+| `--domain color` (podcast) | Dark + orange accent | Confirms dark + warm-orange direction |
+| `--domain ux` "dragging movements" (WCAG 2.2) | Non-drag alternative required | **Fixed**: lightbox ← → buttons now also show on phones (swipe was the only way) |
+| pro-rules pre-delivery: control contrast | Boundaries ≥ 3:1 | **Fixed**: new `--control` token (#726860 dark 3.4:1, #8F8377 light 3.2:1) for inputs, switch, checkbox, selects. The old border was 1.7:1 |
+| pre-delivery: pointer cursor | cursor-pointer on clickables | **Fixed**: base rule for buttons, radios, switches, labels, selects |
+| `--stack nextjs` "loading states" | `loading.tsx` per route | **Fixed**: skeletons for /app, event page, guest /me |
+| `--stack nextjs` "next/image" | Use `<Image>` | **Deliberate exception**: the worker pre-renders sized WebP (thumb 480 / web 2048) with blurhash. Next image optimisation on Cloudflare would need paid Cloudflare Images |
+| `design-system` token architecture | Primitive → semantic → component | **Adopted**: `--dr-*` primitives + per-theme semantic tokens. Mirrored in `tokens.ts` for canvas/QR/meta, with a test that keeps them identical |
+| `design-system/validate-tokens.cjs` | 15 hardcoded hex values in apps/web | **Fixed**: now 0 (QR, print card, theme-color, brand logic all use `fixed.*`) |
+| `brand` template + `inject-brand-context.cjs` | Brand guideline doc | **Written**: `docs/brand-guidelines.md` (voice, prohibited terms, logo rules). Parses cleanly |
+| `brand` colour check on marketing frames | On-palette? | Dominant colours sit close to ink/line tones (ΔRGB 2–33): on brand |
+| `design` logo brief (photography) | Minimal line-art wordmark, aperture symbol, elegant serif | The current mark already matches (aperture ring + amber dot + serif italic). Kept |
+
+The adopted system is also persisted in the skill's own convention at `design-system/glimpse/MASTER.md`, so future
+skill runs read Darkroom instead of regenerating the rejected suggestion.
+
+Not run: AI logo, banner and photo generation in the `design` skill. It needs paid Gemini/MuAPI keys, which conflicts with zero spend.
 
 ## Direction
 
@@ -29,7 +53,8 @@ own work when available.
 | `--ink` | #0E0C0A | #F5EFE6 | page background |
 | `--surface` | #171411 | #FBF8F3 | cards, inputs |
 | `--raised` | #201C18 | #FFFFFF | hover, popovers |
-| `--line` / `--line-strong` | #2E2823 / #463D35 | #E4DACD / #CDBFAE | 1px borders |
+| `--line` / `--line-strong` | #2E2823 / #463D35 | #E4DACD / #CDBFAE | decorative borders, dividers |
+| `--control` | #726860 | #8F8377 | form-control boundaries (≥3:1, WCAG 1.4.11) |
 | `--paper` | #F3EDE4 | #1A1613 | text |
 | `--muted` | #A89E92 | #62584E | secondary text |
 | `--amber` | #FF8A3D | #FF8A3D | primary fills (buttons, rings, focus on dark) |

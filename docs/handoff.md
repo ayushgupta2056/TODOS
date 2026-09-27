@@ -25,9 +25,9 @@ Live spec: `/design`. Rationale: `docs/design-decisions.md`.
 | Component | Variants / sizes | States |
 |---|---|---|
 | Button | primary, secondary, outline, ghost, danger, link · sm 36, md 44, lg 48, xl 56, icon 44 | hover, active (scale .98), focus ring 2px accent + 2px offset, disabled 45%, loading (spinner, `aria-busy`) |
-| Input / Textarea | 44px high | hover border, focus amber border + 25% ring, `aria-invalid` red border, disabled |
+| Input / Textarea | 44px high, `--control` border (≥3:1) | hover border, focus amber border + 25% ring, `aria-invalid` red border, disabled |
 | Field | label + control + hint or error | error replaces hint, `role=alert` |
-| Switch | 28×48 visual, 44px hit area | checked amber, focus ring |
+| Switch | 28×48 visual, 44px hit area, `--control` border | checked amber, focus ring |
 | Badge | neutral, amber, success, danger · optional dot | — |
 | Progress / ProgressRing | bar 6px · ring 104–120px, stroke 6 | value clamped 0–100, `role=progressbar` with `aria-valuenow` |
 | Dialog | centred, max 32rem | open 260ms, Esc closes, focus trapped, title required |
@@ -43,6 +43,8 @@ Live spec: `/design`. Rationale: `docs/design-decisions.md`.
 - Every icon-only control has an `aria-label`. Photos have alt text ("Photo 3 of 47 from …").
 - Live regions: selfie hints (`aria-live=polite`), upload progress, processing status.
 - Keyboard: lightbox ← → Esc; dialogs trap focus; the consent checkbox is a real checkbox.
+- No drag-only interactions: the lightbox has visible prev/next buttons at every width (swipe is optional).
+- Tokens: `--dr-*` primitives → semantic tokens (`darkroom.css`); non-CSS contexts use `fixed.*` from `@glimpse/ui/tokens`.
 - `prefers-reduced-motion` honoured globally.
 
 ## Guest flow (390px)

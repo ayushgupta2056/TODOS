@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Card, CardContent, toast } from "@glimpse/ui";
+import { Button, Card, CardContent, fixed, toast } from "@glimpse/ui";
 import { Copy, Download, Share2 } from "lucide-react";
 
 export function SharePanel({ url, slug, name, qrSvg, pin }: { url: string; slug: string; name: string; qrSvg: string; pin: boolean }) {
@@ -25,26 +25,26 @@ export function SharePanel({ url, slug, name, qrSvg, pin }: { url: string; slug:
       c.height = 1600;
       const g = c.getContext("2d");
       if (!g) return;
-      g.fillStyle = "#0E0C0A";
+      g.fillStyle = fixed.printInk;
       g.fillRect(0, 0, c.width, c.height);
-      g.fillStyle = "#F3EDE4";
+      g.fillStyle = fixed.printPaper;
       g.textAlign = "center";
       g.font = "italic 88px 'Instrument Serif', Georgia, serif";
       g.fillText("Find your photos", 600, 220);
       g.font = "44px 'Instrument Serif', Georgia, serif";
-      g.fillStyle = "#A89E92";
+      g.fillStyle = fixed.printMuted;
       g.fillText(name.length > 38 ? `${name.slice(0, 37)}…` : name, 600, 300);
-      g.fillStyle = "#F3EDE4";
+      g.fillStyle = fixed.printPaper;
       g.fillRect(250, 390, 700, 700);
       g.drawImage(img, 280, 420, 640, 640);
-      g.fillStyle = "#FF8A3D";
+      g.fillStyle = fixed.brandAccent;
       g.beginPath();
       g.arc(600, 1200, 10, 0, Math.PI * 2);
       g.fill();
-      g.fillStyle = "#F3EDE4";
+      g.fillStyle = fixed.printPaper;
       g.font = "40px ui-sans-serif, system-ui, sans-serif";
       g.fillText("Scan · take a selfie · see every photo you're in", 600, 1290);
-      g.fillStyle = "#A89E92";
+      g.fillStyle = fixed.printMuted;
       g.font = "30px ui-monospace, monospace";
       g.fillText(url.replace(/^https?:\/\//, ""), 600, 1370);
       g.font = "26px ui-sans-serif, system-ui, sans-serif";
@@ -61,7 +61,8 @@ export function SharePanel({ url, slug, name, qrSvg, pin }: { url: string; slug:
       <Card>
         <CardContent className="grid gap-5">
           <div
-            className="overflow-hidden rounded-md bg-[#F3EDE4] p-3 [&_svg]:h-auto [&_svg]:w-full"
+            className="overflow-hidden rounded-md p-3 [&_svg]:h-auto [&_svg]:w-full"
+            style={{ background: fixed.printPaper }}
             role="img"
             aria-label={`QR code for ${url}`}
             dangerouslySetInnerHTML={{ __html: qrSvg }}
