@@ -51,8 +51,9 @@ def should_tile(mode: str, work: BGRImage, full_pass: Sequence[DetectedFace]) ->
     h, w = work.shape[:2]
     if max(w, h) < 1400:
         return False
-    # Group photo, or small faces present, or nothing found at all: tiles help recall.
-    return len(full_pass) >= 2 or not full_pass or any(f.w < 48 for f in full_pass)
+    # Tiles cost ~4 extra detector passes, which is slow on small hosts. Only pay for them when
+    # the full pass hints at faces it may have missed: small faces or a crowded group photo.
+    return len(full_pass) >= 6 or any(f.w < 48 for f in full_pass)
 
 
 def detect_faces(

@@ -7,21 +7,26 @@ GET  /healthz
 
 from __future__ import annotations
 
+import asyncio
 import hmac
 import os
 import threading
 from collections.abc import AsyncIterator
+from concurrent.futures import ThreadPoolExecutor
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Header, HTTPException, Request
 from fastapi.responses import JSONResponse
-from starlette.concurrency import run_in_threadpool
 
 from glimpse_worker.config import get_settings
 from glimpse_worker.engine import get_engine
 from glimpse_worker.pipeline import SelfieError, embed_selfie
 
 MAX_SELFIE_BYTES = 8 * 1024 * 1024
+
+# The engine keeps one model pair per thread (~90 MB). Selfies get a single dedicated thread, so
+# a burst of guests can't load dozens of copies and push a 512 MB host out of memory.
+_SELFIE_POOL = ThreadPoolExecutor(max_workers=1, thread_name_prefix="selfie")
 
 
 @asynccontextmanager
@@ -62,7 +67,9 @@ async def selfie_embed(
             raise HTTPException(status_code=413, detail="selfie too large")
     engine = get_engine()
     try:
-        result = await run_in_threadpool(embed_selfie, bytes(body), engine, get_settings())
+        result = await asyncio.get_running_loop().run_in_executor(
+            _SELFIE_POOL, embed_selfie, bytes(body), engine, get_settings()
+        )
     except SelfieError as e:
         return JSONResponse({"ok": False, "code": e.code, "message": e.message}, status_code=422)
     finally:

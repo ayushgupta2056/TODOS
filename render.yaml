@@ -36,6 +36,10 @@ services:
     dockerfilePath: ./apps/worker/Dockerfile
     dockerContext: ./apps/worker
     healthCheckPath: /healthz
+    # Only rebuild (and restart) the worker when its own code changes.
+    buildFilter:
+      paths:
+        - apps/worker/**
     envVars:
       - fromGroup: glimpse-shared
       # Supabase → Connect → Session pooler (IPv4). Replace [YOUR-PASSWORD].
@@ -53,6 +57,14 @@ services:
     buildCommand: corepack enable && pnpm install --frozen-lockfile && pnpm --filter @glimpse/web build
     startCommand: pnpm --filter @glimpse/web start
     healthCheckPath: /
+    buildFilter:
+      paths:
+        - apps/web/**
+        - packages/**
+        - package.json
+        - pnpm-lock.yaml
+        - pnpm-workspace.yaml
+        - turbo.json
     envVars:
       - fromGroup: glimpse-shared
       - key: NODE_VERSION

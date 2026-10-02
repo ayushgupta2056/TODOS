@@ -39,8 +39,11 @@ def decode(data: bytes, max_edge: int | None = None) -> DecodedImage:
     try:
         opened = Image.open(io.BytesIO(data))
         full_w, full_h = opened.size
-        if max_edge and opened.format == "JPEG":
-            opened.draft("RGB", (max_edge, max_edge))
+        if max_edge and opened.format == "JPEG" and max(full_w, full_h) > max_edge:
+            # draft() only reduces while *both* sides stay >= the request, so ask for the
+            # target size in the photo's own aspect ratio (a square box would never shrink).
+            scale = max_edge / max(full_w, full_h)
+            opened.draft("RGB", (math.ceil(full_w * scale), math.ceil(full_h * scale)))
         opened.load()
     except Exception as exc:  # Pillow raises many types
         raise ImageDecodeError(f"cannot decode image: {exc}") from exc
@@ -85,11 +88,13 @@ def resized(img: Image.Image, long_edge: int) -> Image.Image:
     scale = long_edge / max(w, h)
     if scale >= 1.0:
         return img
-    return img.resize(
-        (max(1, round(w * scale)), max(1, round(h * scale))),
-        Image.Resampling.LANCZOS,
-        reducing_gap=3.0,
-    )
+    size = (max(1, round(w * scale)), max(1, round(h * scale)))
+    if img.mode not in ("RGB", "L"):
+        return img.resize(size, Image.Resampling.LANCZOS, reducing_gap=3.0)
+    # OpenCV's area filter is several times faster than PIL's Lanczos for big downscales and
+    # looks the same at these ratios; it matters on small (0.1 CPU) hosts.
+    arr = cv2.resize(np.asarray(img), size, interpolation=cv2.INTER_AREA)
+    return Image.fromarray(arr)
 
 
 def to_bgr(img: Image.Image) -> BGRImage:
@@ -109,7 +114,7 @@ def resize_bgr(img: BGRImage, long_edge: int) -> tuple[BGRImage, float]:
 
 def webp_bytes(img: Image.Image, quality: int) -> bytes:
     buf = io.BytesIO()
-    img.save(buf, format="WEBP", quality=quality, method=2)
+    img.save(buf, format="WEBP", quality=quality, method=1)
     return buf.getvalue()
 
 

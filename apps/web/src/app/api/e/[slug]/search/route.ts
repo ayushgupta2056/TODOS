@@ -11,6 +11,39 @@ const MATCH_TTL_H = 24;
 const WorkerOk = z.object({ ok: z.literal(true), engine_version: z.string(), embedding: z.array(z.number()).length(128) });
 const WorkerErr = z.object({ ok: z.literal(false), code: z.string() });
 
+// A free-tier worker may be asleep or restarting: retry transient failures inside this budget.
+const WORKER_BUDGET_MS = 90_000;
+const ATTEMPT_TIMEOUT_MS = 35_000;
+const RETRY_DELAY_MS = 3_000;
+
+type Embedded = { ok: true; data: z.infer<typeof WorkerOk> } | { ok: false; code: string };
+
+async function embedSelfie(workerUrl: string, token: string, bytes: ArrayBuffer): Promise<Embedded> {
+  const deadline = Date.now() + WORKER_BUDGET_MS;
+  for (;;) {
+    const left = deadline - Date.now();
+    try {
+      const res = await fetch(`${workerUrl}/v1/selfie/embed`, {
+        method: "POST",
+        headers: { "x-worker-token": token, "content-type": "application/octet-stream" },
+        body: bytes,
+        signal: AbortSignal.timeout(Math.min(ATTEMPT_TIMEOUT_MS, left)),
+      });
+      const payload: unknown = await res.json().catch(() => null);
+      const err = WorkerErr.safeParse(payload);
+      if (err.success) return { ok: false, code: err.data.code };
+      const ok = WorkerOk.safeParse(payload);
+      if (ok.success) return { ok: true, data: ok.data };
+      // 502/503 from the host while the worker boots: transient. Anything else is not.
+      if (res.status < 500) return { ok: false, code: "unavailable" };
+    } catch {
+      // network error or timeout: the worker is waking up or restarting
+    }
+    if (deadline - Date.now() < RETRY_DELAY_MS + 5_000) return { ok: false, code: "unavailable" };
+    await new Promise((r) => setTimeout(r, RETRY_DELAY_MS));
+  }
+}
+
 function fail(code: string, status: number) {
   return NextResponse.json({ code }, { status, headers: { "cache-control": "no-store" } });
 }
@@ -45,28 +78,14 @@ export async function POST(req: Request, ctx: { params: Promise<{ slug: string }
   if (!bytes.byteLength || bytes.byteLength > MAX_BYTES) return fail("bad_image", 413);
 
   const e = env();
-  let embedRes: Response;
-  try {
-    embedRes = await fetch(`${e.WORKER_URL}/v1/selfie/embed`, {
-      method: "POST",
-      headers: { "x-worker-token": e.WORKER_TOKEN, "content-type": "application/octet-stream" },
-      body: bytes,
-      signal: AbortSignal.timeout(60_000), // free hosts may cold-start the worker
-    });
-  } catch {
-    return fail("unavailable", 503);
-  }
-  const payload: unknown = await embedRes.json().catch(() => null);
-  const err = WorkerErr.safeParse(payload);
-  if (err.success) return fail(err.data.code, 422);
-  const ok = WorkerOk.safeParse(payload);
-  if (!ok.success) return fail("unavailable", 503);
+  const embedded = await embedSelfie(e.WORKER_URL, e.WORKER_TOKEN, bytes);
+  if (!embedded.ok) return embedded.code === "unavailable" ? fail("unavailable", 503) : fail(embedded.code, 422);
 
   const admin = supabaseAdmin();
   const { data: rows, error } = await admin.rpc("search_event_faces", {
     p_event_id: ev.id,
-    p_embedding: `[${ok.data.embedding.join(",")}]`,
-    p_engine_version: ok.data.engine_version,
+    p_embedding: `[${embedded.data.embedding.join(",")}]`,
+    p_engine_version: embedded.data.engine_version,
     p_threshold: e.MATCH_THRESHOLD,
     p_cluster_threshold: e.CLUSTER_MATCH_THRESHOLD,
   });

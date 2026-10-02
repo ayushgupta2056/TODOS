@@ -101,8 +101,10 @@ def test_should_tile_modes() -> None:
     assert should_tile("always", small, [])
     assert not should_tile("never", big, [])
     assert not should_tile("auto", small, [])
-    assert should_tile("auto", big, [face(0, 0), face(200, 0)])
-    assert not should_tile("auto", big, [face(0, 0, w=200, h=200)])
+    assert should_tile("auto", big, [face(0, 0, w=30, h=30)])
+    assert should_tile("auto", big, [face(i * 100, 0, w=80, h=80) for i in range(6)])
+    assert not should_tile("auto", big, [face(0, 0, w=200, h=200), face(300, 0, w=200, h=200)])
+    assert not should_tile("auto", big, [])
 
 
 def test_translate_scale() -> None:

@@ -17,7 +17,7 @@ const ERROR_COPY: Record<string, string> = {
   bad_image: "We couldn't read that image. Try again.",
   rate_limited: "Lots of searches just now. Wait a minute and try again.",
   consent: "Please confirm consent first.",
-  unavailable: "Matching is taking a break. Try again in a minute.",
+  unavailable: "The matcher is still starting up. Try again in a moment.",
 };
 
 interface Detector {
@@ -65,6 +65,7 @@ export function SelfieCamera({ slug, eventName }: { slug: string; eventName: str
   const [count, setCount] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [frozen, setFrozen] = useState<string | null>(null);
+  const [slow, setSlow] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const detectorRef = useRef<Detector | null>(null);
@@ -158,6 +159,9 @@ export function SelfieCamera({ slug, eventName }: { slug: string; eventName: str
 
   async function search(blob: Blob) {
     setPhase("matching");
+    setSlow(false);
+    // A sleeping free-tier worker takes a while to wake: say so instead of looking stuck.
+    const slowTimer = setTimeout(() => setSlow(true), 8000);
     try {
       const res = await fetch(`/api/e/${slug}/search`, { method: "POST", body: blob, headers: { "content-type": blob.type || "image/jpeg" } });
       const body = (await res.json().catch(() => ({}))) as { count?: number; code?: string };
@@ -172,6 +176,7 @@ export function SelfieCamera({ slug, eventName }: { slug: string; eventName: str
       setPhase("error");
       setError("You seem to be offline. Check your connection and try again.");
     } finally {
+      clearTimeout(slowTimer);
       setFrozen((f) => {
         if (f) URL.revokeObjectURL(f);
         return null;
@@ -358,7 +363,7 @@ export function SelfieCamera({ slug, eventName }: { slug: string; eventName: str
         ) : null}
         {phase === "matching" ? (
           <p className="py-6 text-center text-paper" aria-live="polite">
-            Looking through the photos…
+            {slow ? "Waking up the matcher. The first search can take up to a minute…" : "Looking through the photos…"}
           </p>
         ) : null}
         {phase === "found" ? (
