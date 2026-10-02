@@ -22,6 +22,10 @@ envVarGroups:
         sync: false
       - key: S3_SECRET_ACCESS_KEY
         sync: false
+      # Alternative to an S3 access key: Supabase "session token" auth. Set S3_ACCESS_KEY_ID to the
+      # project ref, S3_SECRET_ACCESS_KEY to the anon key and this to the service_role key.
+      - key: S3_SESSION_TOKEN
+        sync: false
 
 services:
   - type: web

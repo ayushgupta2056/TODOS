@@ -13,6 +13,7 @@ function aws(): AwsClient {
   client ??= new AwsClient({
     accessKeyId: e.S3_ACCESS_KEY_ID,
     secretAccessKey: e.S3_SECRET_ACCESS_KEY,
+    ...(e.S3_SESSION_TOKEN ? { sessionToken: e.S3_SESSION_TOKEN } : {}),
     service: "s3",
     region: e.S3_REGION,
   });

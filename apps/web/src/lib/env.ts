@@ -15,6 +15,8 @@ const schema = z.object({
   S3_BUCKET: z.string().min(3),
   S3_ACCESS_KEY_ID: z.string().min(1),
   S3_SECRET_ACCESS_KEY: z.string().min(1),
+  // Supabase Storage session-token auth (key id = project ref, secret = anon key, token = service_role JWT).
+  S3_SESSION_TOKEN: z.string().optional(),
   WORKER_URL: z.url(),
   WORKER_TOKEN: z.string().min(8),
   MATCH_THRESHOLD: z.coerce.number().min(0).max(1).default(0.42),

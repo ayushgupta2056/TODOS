@@ -57,6 +57,9 @@ class Settings(BaseSettings):
     s3_bucket: str = "glimpse"
     s3_access_key_id: str = "glimpse"
     s3_secret_access_key: str = "glimpse-secret"
+    # Supabase Storage "session token" auth: key id = project ref, secret = anon key,
+    # token = service_role JWT. Empty for R2 / MinIO.
+    s3_session_token: str = ""
 
     worker_token: str = "dev-worker-token"
     concurrency: int = Field(default_factory=lambda: os.cpu_count() or 1)

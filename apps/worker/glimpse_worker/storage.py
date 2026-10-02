@@ -21,7 +21,11 @@ def _client() -> Any:
         region_name=s.s3_region,
         aws_access_key_id=s.s3_access_key_id,
         aws_secret_access_key=s.s3_secret_access_key,
+        aws_session_token=s.s3_session_token or None,
         config=Config(
+            # Some S3-compatible stores (Supabase) reject the newer default checksum headers.
+            request_checksum_calculation="when_required",
+            response_checksum_validation="when_required",
             signature_version="s3v4",
             s3={"addressing_style": "path"},
             retries={"max_attempts": 5, "mode": "standard"},
@@ -59,7 +63,13 @@ def delete_prefix(prefix: str) -> int:
         page = c.list_objects_v2(**kw)
         keys = [{"Key": o["Key"]} for o in page.get("Contents", [])]
         if keys:
-            c.delete_objects(Bucket=bucket, Delete={"Objects": keys, "Quiet": True})
+            try:
+                c.delete_objects(Bucket=bucket, Delete={"Objects": keys, "Quiet": True})
+            except Exception:
+                # Not every S3-compatible store supports DeleteObjects (e.g. Supabase with
+                # session-token auth): fall back to one request per object.
+                for k in keys:
+                    c.delete_object(Bucket=bucket, Key=k["Key"])
             n += len(keys)
         if not page.get("IsTruncated"):
             return n
