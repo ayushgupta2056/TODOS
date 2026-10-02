@@ -41,6 +41,7 @@ const admin = createClient(need("NEXT_PUBLIC_SUPABASE_URL"), need("SUPABASE_SERV
 const s3 = new AwsClient({
   accessKeyId: need("S3_ACCESS_KEY_ID"),
   secretAccessKey: need("S3_SECRET_ACCESS_KEY"),
+  ...(process.env.S3_SESSION_TOKEN ? { sessionToken: process.env.S3_SESSION_TOKEN } : {}),
   service: "s3",
   region: process.env.S3_REGION ?? "us-east-1",
 });
@@ -115,6 +116,8 @@ async function main(): Promise<void> {
       if (data?.[0]?.created) added++;
     }
     console.log(`queued ${added} new photos (${files.length - added} already present)`);
+    // Free hosts sleep the worker when idle: poke it so the queue gets processed.
+    if (process.env.WORKER_URL) await fetch(`${process.env.WORKER_URL}/healthz`).catch(() => undefined);
   }
 
   const { data: link, error } = await admin.auth.admin.generateLink({ type: "magiclink", email: EMAIL });

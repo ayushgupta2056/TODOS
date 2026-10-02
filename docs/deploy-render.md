@@ -64,3 +64,19 @@ Supabase → **Authentication → URL Configuration**:
 - **Updating:** push to the branch and Render redeploys automatically.
 - **Database changes later:** new migrations in `packages/db/supabase/migrations` must also be run in the SQL
   editor (or with `npx supabase db push` after `npx supabase link`).
+
+---
+
+## Current live deployment (2026-10-02)
+
+| What | Where |
+|---|---|
+| Website | https://glimpse-web-8vwy.onrender.com (Render workspace **Glimpse**, service `glimpse-web`) |
+| Face worker | https://glimpse-worker.onrender.com (service `glimpse-worker`) |
+| Supabase | org **Glimpse**, project `glimpse` (ref `rmkbenhudfbxzqyywham`, Mumbai) |
+
+Both Render services auto-deploy from branch `claude/new-session-vb6ovi`. Storage uses Supabase's
+"session token" S3 auth (`S3_ACCESS_KEY_ID` = project ref, `S3_SECRET_ACCESS_KEY` = anon key,
+`S3_SESSION_TOKEN` = service_role key), so no separate storage key is needed.
+Verified live: sign-in, onboarding, upload → worker → 10/10 photos processed, selfie search (4/4 correct
+matches, 0 wrong), gallery, ZIP, event hard-delete (DB rows and stored files).
