@@ -67,6 +67,11 @@ class Settings(BaseSettings):
     job_max_attempts: int = 5
     lock_timeout_s: int = 600
     cluster_debounce_s: int = 20
+    # Free hosts (Render) sleep a service after ~15 min without inbound HTTP, even mid-queue.
+    # While jobs are pending the worker pings its own public URL to stay awake.
+    # Render sets RENDER_EXTERNAL_URL automatically; empty disables the keep-alive.
+    keepalive_url: str = Field(default_factory=lambda: os.environ.get("RENDER_EXTERNAL_URL", ""))
+    keepalive_every_s: int = 240
 
 
 @lru_cache(maxsize=1)

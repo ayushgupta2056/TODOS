@@ -3,8 +3,9 @@ import { env } from "./env";
 
 /**
  * Free hosts (e.g. Render) put the worker to sleep when idle, which also pauses the queue consumer.
- * Poke it when work arrives or a guest shows up, without waiting for the answer.
+ * Poke it when work arrives or a guest shows up. The request only has to reach the host to
+ * trigger a cold start, so a short timeout is enough; awaiting it makes sure it is actually sent.
  */
-export function wakeWorker(): void {
-  void fetch(`${env().WORKER_URL}/healthz`, { signal: AbortSignal.timeout(60_000) }).catch(() => undefined);
+export async function wakeWorker(timeoutMs = 4000): Promise<void> {
+  await fetch(`${env().WORKER_URL}/healthz`, { signal: AbortSignal.timeout(timeoutMs) }).catch(() => undefined);
 }

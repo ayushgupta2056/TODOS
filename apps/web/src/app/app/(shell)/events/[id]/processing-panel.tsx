@@ -40,7 +40,11 @@ export function ProcessingPanel({ eventId, initial }: { eventId: string; initial
         .select("photo_count, processed_count, failed_count, face_count, people_count")
         .eq("id", eventId)
         .maybeSingle();
-      if (data) apply(data);
+      if (data) {
+        apply(data);
+        // Keep a sleeping free-tier worker awake while this event still has photos queued.
+        if (data.processed_count < data.photo_count) void fetch(`/api/events/${eventId}/wake`, { method: "POST" }).catch(() => undefined);
+      }
     }, 10_000);
     return () => {
       clearInterval(poll);

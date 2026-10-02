@@ -63,6 +63,6 @@ export async function POST(req: Request) {
       ...(error ? { error: error.message } : {}),
     });
   }
-  if (results.some((r) => r.created)) wakeWorker();
+  if (results.some((r) => r.created)) await wakeWorker();
   return NextResponse.json({ results });
 }

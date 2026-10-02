@@ -20,7 +20,7 @@ export default async function ConsentPage({
   const ev = await getPublicEvent(slug);
   if (!ev) notFound();
   if (!(await hasEventAccess(ev))) redirect(`/e/${slug}`);
-  wakeWorker(); // so the selfie search doesn't wait for a cold start
+  void wakeWorker(); // so the selfie search doesn't wait for a cold start (don't block the page)
 
   const points = [
     { icon: Camera, title: "One selfie, used once", body: "We compare it with the faces in this event's photos to find yours." },

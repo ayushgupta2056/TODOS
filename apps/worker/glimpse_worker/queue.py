@@ -14,6 +14,7 @@ import signal
 import socket
 import threading
 import time
+import urllib.request
 from collections.abc import Callable
 from dataclasses import dataclass
 from typing import Any
@@ -409,6 +410,15 @@ def maintenance(conn: Connection[Any], s: Settings) -> None:
     conn.commit()
 
 
+def has_pending_work() -> bool:
+    with pool().connection() as conn:
+        row = conn.execute(
+            "select exists (select 1 from public.jobs where status in ('queued', 'running'))"
+        ).fetchone()
+        conn.rollback()
+    return bool(row and row[0])
+
+
 # --- runner -----------------------------------------------------------------------------------
 
 
@@ -440,11 +450,22 @@ def run_consumer(stop: threading.Event | None = None) -> None:
                 log.exception("maintenance error")
             stop.wait(60)
 
+    def keepalive() -> None:
+        url = s.keepalive_url.rstrip("/") + "/healthz"
+        while not stop.wait(s.keepalive_every_s):
+            try:
+                if has_pending_work():
+                    urllib.request.urlopen(url, timeout=30).close()  # our own public URL
+            except Exception:
+                log.warning("keep-alive ping failed", exc_info=True)
+
     threads = [
         threading.Thread(target=loop, name=f"consumer-{i}", daemon=True)
         for i in range(s.concurrency)
     ]
     threads.append(threading.Thread(target=maint, name="maintenance", daemon=True))
+    if s.keepalive_url:
+        threads.append(threading.Thread(target=keepalive, name="keepalive", daemon=True))
     for t in threads:
         t.start()
     log.info("consumer started: %d threads, engine %s", s.concurrency, engine.version)
