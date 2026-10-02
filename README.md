@@ -58,5 +58,8 @@ uv run glimpse-face bench ./photos           # photos/sec on one core
 
 ## Deploy
 
+**Quickest (free, no card): [Render + Supabase](docs/deploy-render.md)**: a real public link in about 20 minutes.
+
+
 See [`docs/deploy.md`](docs/deploy.md): Cloudflare Workers (web), Supabase free (DB/Auth), Cloudflare R2 (photos),
 Oracle Cloud Always Free Ampere VM (worker). What costs money and when: [`docs/costs.md`](docs/costs.md).

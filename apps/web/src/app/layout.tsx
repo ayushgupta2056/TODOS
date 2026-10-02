@@ -31,7 +31,7 @@ export const metadata: Metadata = {
   title: { default: "Glimpse — find yourself in every photo", template: "%s · Glimpse" },
   description:
     "Event photographers upload once. Guests take a selfie and see only the photos they're in. Private by design.",
-  metadataBase: new URL(process.env.APP_URL ?? "http://localhost:3000"),
+  metadataBase: new URL(process.env.APP_URL ?? process.env.RENDER_EXTERNAL_URL ?? "http://localhost:3000"),
 };
 
 export const viewport: Viewport = {

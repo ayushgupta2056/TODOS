@@ -6,10 +6,11 @@ import Uppy from "@uppy/core";
 import { FolderUp, ImageUp, RotateCcw, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { formatBytes, formatCount } from "@/lib/format";
+import { publicEnv } from "@/lib/public-env";
 
 const ACCEPT = ["image/jpeg", "image/png", "image/webp", "image/tiff"];
 const EXT: Record<string, string> = { "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp", "image/tiff": "tiff" };
-const MAX_BYTES = 200 * 1024 * 1024;
+const MAX_BYTES = publicEnv.maxUploadMb * 1024 * 1024;
 
 type Meta = { sha256: string; objectKey: string; contentType: string };
 type Phase = "idle" | "hashing" | "uploading" | "done" | "blocked";
@@ -134,7 +135,7 @@ export function Uploader({ eventId, token }: { eventId: string; token: string })
     }).use(AwsS3<Meta, Record<string, never>>, {
       limit: 6,
       allowedMetaFields: false, // metadata headers would be unsigned on presigned URLs
-      shouldUseMultipart: (file) => (file.size ?? 0) > 20 * 1024 * 1024,
+      shouldUseMultipart: (file) => publicEnv.uploadMultipart && (file.size ?? 0) > 20 * 1024 * 1024,
       getChunkSize: () => 8 * 1024 * 1024,
       generateObjectKey: (file) => file.meta.objectKey,
       signRequest: async (request) => {
@@ -275,7 +276,7 @@ export function Uploader({ eventId, token }: { eventId: string; token: string })
           <>
             <div className="grid gap-2">
               <p className="font-display text-3xl">Drop the whole shoot here</p>
-              <p className="text-sm text-muted">Folders welcome. JPEG, PNG, WebP or TIFF, up to 200 MB each. Duplicates are skipped.</p>
+              <p className="text-sm text-muted">Folders welcome. JPEG, PNG, WebP or TIFF, up to {publicEnv.maxUploadMb} MB each. Duplicates are skipped.</p>
             </div>
             <div className="flex flex-wrap justify-center gap-3">
               <Button onClick={() => folderInput.current?.click()}>

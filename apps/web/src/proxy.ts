@@ -30,5 +30,6 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/app/:path*", "/login", "/auth/:path*", "/api/uploads/:path*", "/api/events/:path*"],
+  // Upload routes are authorised by a short-lived upload token, not the session: keep them out.
+  matcher: ["/app/:path*", "/login", "/auth/:path*", "/api/events/:path*"],
 };

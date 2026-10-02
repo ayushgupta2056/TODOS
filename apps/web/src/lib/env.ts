@@ -2,7 +2,7 @@ import "server-only";
 import { z } from "zod";
 
 const schema = z.object({
-  APP_URL: z.url().default("http://localhost:3000"),
+  APP_URL: z.url().default(process.env.RENDER_EXTERNAL_URL ?? "http://localhost:3000"),
   NEXT_PUBLIC_SUPABASE_URL: z.url(),
   // Server-side Supabase URL when it differs from the browser one (e.g. behind a tunnel/CDN).
   SUPABASE_URL: z.url().optional(),

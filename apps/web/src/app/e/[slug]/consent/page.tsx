@@ -2,6 +2,7 @@ import { Camera, Clock, EyeOff, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { getPublicEvent, hasEventAccess } from "@/lib/guest";
+import { wakeWorker } from "@/lib/worker";
 import { giveConsent } from "../actions";
 import { ConsentControls } from "./consent-controls";
 
@@ -19,6 +20,7 @@ export default async function ConsentPage({
   const ev = await getPublicEvent(slug);
   if (!ev) notFound();
   if (!(await hasEventAccess(ev))) redirect(`/e/${slug}`);
+  wakeWorker(); // so the selfie search doesn't wait for a cold start
 
   const points = [
     { icon: Camera, title: "One selfie, used once", body: "We compare it with the faces in this event's photos to find yours." },

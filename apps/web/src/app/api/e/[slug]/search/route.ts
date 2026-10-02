@@ -51,7 +51,7 @@ export async function POST(req: Request, ctx: { params: Promise<{ slug: string }
       method: "POST",
       headers: { "x-worker-token": e.WORKER_TOKEN, "content-type": "application/octet-stream" },
       body: bytes,
-      signal: AbortSignal.timeout(20_000),
+      signal: AbortSignal.timeout(60_000), // free hosts may cold-start the worker
     });
   } catch {
     return fail("unavailable", 503);

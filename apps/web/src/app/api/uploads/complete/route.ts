@@ -4,6 +4,7 @@ import { checkUpload, getUsage } from "@/lib/plans";
 import { headObject } from "@/lib/s3";
 import { supabaseAdmin } from "@/lib/supabase/server";
 import { ORIGINAL_KEY, readUploadToken } from "@/lib/upload-token";
+import { wakeWorker } from "@/lib/worker";
 
 const Body = z.object({
   token: z.string().min(10),
@@ -62,5 +63,6 @@ export async function POST(req: Request) {
       ...(error ? { error: error.message } : {}),
     });
   }
+  if (results.some((r) => r.created)) wakeWorker();
   return NextResponse.json({ results });
 }

@@ -96,12 +96,14 @@ cd apps/worker && uv run glimpse-face index|search|bench|models
 pnpm turbo run lint typecheck test             # everything (web, ui, db RLS, worker)
 cd apps/web && pnpm e2e                        # Playwright full flow (needs E2E_PHOTOS_DIR, E2E_SELFIE)
 pnpm --filter @glimpse/web cf:build            # Cloudflare Worker bundle (uses `next build --webpack`)
+pnpm --filter @glimpse/db hosted-sql          # regenerate packages/db/hosted-setup.sql (paste into Supabase SQL editor)
 ```
 
 Gotchas:
 - Next 16: `proxy.ts` (not middleware), async `params`/`cookies()`. Read `apps/web/node_modules/next/dist/docs/` before using unfamiliar APIs.
 - Keep the Worker bundle under 3 MiB gzipped (free plan). Turbopack builds are too big, so builds use webpack.
 - Presigned uploads must not send `x-amz-meta-*` headers (Uppy `allowedMetaFields: false`).
+- Render deploy (`render.yaml`, docs/deploy-render.md) stores photos in Supabase Storage via its S3 API. That API rejects presigned CreateMultipartUpload, so set `NEXT_PUBLIC_UPLOAD_MULTIPART=false` (single presigned PUTs, ≤50 MB on free).
 - Local S3 is MinIO via the frozen `bitnamilegacy/minio` image (official MinIO images are no longer pullable). MinIO has no bucket-CORS API: CORS comes from `MINIO_API_CORS_ALLOW_ORIGIN`. Fallback: `--profile seaweedfs` (:8333).
 
 ## Current status

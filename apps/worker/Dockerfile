@@ -14,5 +14,6 @@ RUN uv run glimpse-face models
 RUN useradd --system --uid 10001 glimpse && chown -R glimpse /app
 USER glimpse
 EXPOSE 8787
-HEALTHCHECK --interval=30s --timeout=5s CMD python -c "import urllib.request;urllib.request.urlopen('http://127.0.0.1:8787/healthz')"
-CMD ["uv", "run", "--no-sync", "glimpse-face", "serve", "--consume", "--port", "8787"]
+HEALTHCHECK --interval=30s --timeout=5s CMD sh -c "/app/.venv/bin/python -c \"import os,urllib.request;urllib.request.urlopen('http://127.0.0.1:%s/healthz' % os.environ.get('PORT','8787'))\""
+# Run the installed entry point directly (the non-root user has no home, so no uv cache at runtime).
+CMD ["sh", "-c", "exec /app/.venv/bin/glimpse-face serve --consume --port ${PORT:-8787}"]
