@@ -4,9 +4,13 @@ import { z } from "zod";
 const schema = z.object({
   APP_URL: z.url().default("http://localhost:3000"),
   NEXT_PUBLIC_SUPABASE_URL: z.url(),
+  // Server-side Supabase URL when it differs from the browser one (e.g. behind a tunnel/CDN).
+  SUPABASE_URL: z.url().optional(),
   NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(20),
   SUPABASE_SERVICE_ROLE_KEY: z.string().min(20),
   S3_ENDPOINT: z.url(),
+  // Host browsers use for presigned URLs, if different from S3_ENDPOINT (custom R2 domain, tunnel).
+  S3_PUBLIC_ENDPOINT: z.url().optional(),
   S3_REGION: z.string().default("us-east-1"),
   S3_BUCKET: z.string().min(3),
   S3_ACCESS_KEY_ID: z.string().min(1),

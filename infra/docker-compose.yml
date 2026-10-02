@@ -17,7 +17,7 @@ services:
       MINIO_ROOT_PASSWORD: glimpse-secret
       MINIO_DEFAULT_BUCKETS: glimpse
       # Browsers upload straight to storage; MinIO has no per-bucket CORS API, only this setting.
-      MINIO_API_CORS_ALLOW_ORIGIN: "http://localhost:3000,http://127.0.0.1:3000"
+      MINIO_API_CORS_ALLOW_ORIGIN: "${MINIO_CORS_ORIGINS:-http://localhost:3000,http://127.0.0.1:3000}"
     ports: ["9000:9000", "9001:9001"]
     volumes: ["s3data:/bitnami/minio/data"]
     healthcheck:

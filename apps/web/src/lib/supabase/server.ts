@@ -4,12 +4,14 @@ import { createServerClient } from "@supabase/ssr";
 import { createClient } from "@supabase/supabase-js";
 import { cookies } from "next/headers";
 import { env } from "../env";
+import { AUTH_COOKIE } from "./cookie";
 
 /** Per-request client acting as the signed-in photographer (RLS applies). */
 export async function supabaseServer() {
   const store = await cookies();
   const e = env();
-  return createServerClient<Database>(e.NEXT_PUBLIC_SUPABASE_URL, e.NEXT_PUBLIC_SUPABASE_ANON_KEY, {
+  return createServerClient<Database>(e.SUPABASE_URL ?? e.NEXT_PUBLIC_SUPABASE_URL, e.NEXT_PUBLIC_SUPABASE_ANON_KEY, {
+    cookieOptions: { name: AUTH_COOKIE },
     cookies: {
       getAll: () => store.getAll(),
       setAll: (list) => {
@@ -29,7 +31,7 @@ let admin: ReturnType<typeof createClient<Database>> | undefined;
 export function supabaseAdmin() {
   if (admin) return admin;
   const e = env();
-  admin = createClient<Database>(e.NEXT_PUBLIC_SUPABASE_URL, e.SUPABASE_SERVICE_ROLE_KEY, {
+  admin = createClient<Database>(e.SUPABASE_URL ?? e.NEXT_PUBLIC_SUPABASE_URL, e.SUPABASE_SERVICE_ROLE_KEY, {
     auth: { persistSession: false, autoRefreshToken: false },
   });
   return admin;

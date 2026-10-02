@@ -19,10 +19,11 @@ function aws(): AwsClient {
   return client;
 }
 
-function objectUrl(key: string): URL {
+function objectUrl(key: string, forBrowser = false): URL {
   const e = env();
+  const base = forBrowser ? (e.S3_PUBLIC_ENDPOINT ?? e.S3_ENDPOINT) : e.S3_ENDPOINT;
   const path = key.split("/").map(encodeURIComponent).join("/");
-  return new URL(`${e.S3_ENDPOINT.replace(/\/$/, "")}/${e.S3_BUCKET}/${path}`);
+  return new URL(`${base.replace(/\/$/, "")}/${e.S3_BUCKET}/${path}`);
 }
 
 async function presign(
@@ -31,7 +32,7 @@ async function presign(
   expiresIn: number,
   params: Record<string, string> = {},
 ): Promise<string> {
-  const url = objectUrl(key);
+  const url = objectUrl(key, true);
   for (const [k, v] of Object.entries(params)) url.searchParams.set(k, v);
   url.searchParams.set("X-Amz-Expires", String(expiresIn));
   const signed = await aws().sign(url.toString(), { method, aws: { signQuery: true } });
@@ -159,7 +160,7 @@ export interface UppySignRequest {
 
 /** Presign exactly the S3 call Uppy's S3 client is about to make (see @uppy/aws-s3 signer). */
 export async function presignUppy(req: UppySignRequest): Promise<string> {
-  const url = objectUrl(req.key);
+  const url = objectUrl(req.key, true);
   if (req.method === "POST" && !req.uploadId) url.searchParams.set("uploads", "");
   if (req.uploadId) url.searchParams.set("uploadId", req.uploadId);
   if (req.partNumber !== undefined) url.searchParams.set("partNumber", String(req.partNumber));
