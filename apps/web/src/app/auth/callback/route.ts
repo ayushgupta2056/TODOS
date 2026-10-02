@@ -1,4 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server";
+import { publicOrigin } from "@/lib/origin";
 import { supabaseServer } from "@/lib/supabase/server";
 
 export async function GET(request: NextRequest) {
@@ -15,5 +16,5 @@ export async function GET(request: NextRequest) {
   } else if (tokenHash && (type === "magiclink" || type === "email" || type === "signup")) {
     ok = !(await sb.auth.verifyOtp({ token_hash: tokenHash, type: type === "signup" ? "signup" : "email" })).error;
   }
-  return NextResponse.redirect(new URL(ok ? next : "/login?error=link", url.origin));
+  return NextResponse.redirect(new URL(ok ? next : "/login?error=link", publicOrigin(url.origin)));
 }

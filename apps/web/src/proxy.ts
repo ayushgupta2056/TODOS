@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { publicOrigin } from "./lib/origin";
 import { AUTH_COOKIE } from "./lib/supabase/cookie";
 
 /** Refreshes the Supabase auth session cookie for photographer routes. Guests never hit this. */
@@ -21,8 +22,7 @@ export async function proxy(request: NextRequest) {
   });
   const { data } = await supabase.auth.getUser();
   if (!data.user && request.nextUrl.pathname.startsWith("/app")) {
-    const login = request.nextUrl.clone();
-    login.pathname = "/login";
+    const login = new URL("/login", publicOrigin(request.nextUrl.origin));
     login.search = `?next=${encodeURIComponent(request.nextUrl.pathname)}`;
     return NextResponse.redirect(login);
   }

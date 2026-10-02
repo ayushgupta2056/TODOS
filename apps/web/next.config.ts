@@ -5,7 +5,13 @@ const config: NextConfig = {
   poweredByHeader: false,
   images: { unoptimized: true },
   experimental: {
-    serverActions: { bodySizeLimit: "2mb" },
+    serverActions: {
+      bodySizeLimit: "2mb",
+      // Behind a hosting proxy the forwarded host must match the browser's Origin.
+      allowedOrigins: [process.env.APP_URL, process.env.RENDER_EXTERNAL_URL]
+        .filter((u): u is string => !!u)
+        .map((u) => new URL(u).host),
+    },
   },
   async headers() {
     const security = [
