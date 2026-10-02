@@ -2,6 +2,7 @@ import { fixed, Toaster } from "@glimpse/ui";
 import type { Metadata, Viewport } from "next";
 import { Instrument_Serif } from "next/font/google";
 import localFont from "next/font/local";
+import { WakeWorker } from "@/components/wake-worker";
 import "./globals.css";
 
 const geistSans = localFont({
@@ -59,6 +60,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         {children}
         <Toaster />
+        <WakeWorker />
       </body>
     </html>
   );
