@@ -1,0 +1,9 @@
+{
+  "identities": [
+    {
+      "name": "glimpse",
+      "credentials": [{ "accessKey": "glimpse", "secretKey": "glimpse-secret" }],
+      "actions": ["Admin", "Read", "Write", "List", "Tagging"]
+    }
+  ]
+}

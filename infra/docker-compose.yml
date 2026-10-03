@@ -1,0 +1,55 @@
+# Local stack, fully offline once images are pulled.
+#   pnpm db:start        -> Supabase (Postgres+pgvector, Auth, Realtime, Mailpit) via the Supabase CLI
+#   pnpm stack:up        -> this file: MinIO (R2 stand-in) on :9000, console on :9001
+#   docker compose -f infra/docker-compose.yml --profile worker up -d   -> also the face worker
+#
+# MinIO's own images (minio/minio, quay.io/minio/minio) are no longer publicly pullable, so this
+# uses Bitnami's frozen build (MinIO RELEASE 2025-05-24). It is a dev-only stand-in for R2 and is
+# never shipped. MinIO is AGPL-3.0; running it unmodified for local development is fine.
+# If that image disappears too: `--profile seaweedfs` starts SeaweedFS (Apache-2.0) on :8333.
+name: glimpse
+services:
+  s3:
+    image: bitnamilegacy/minio:2025.5.24
+    user: "0" # the named volume is created root-owned; the image's default uid 1001 can't write to it
+    environment:
+      MINIO_ROOT_USER: glimpse
+      MINIO_ROOT_PASSWORD: glimpse-secret
+      MINIO_DEFAULT_BUCKETS: glimpse
+      # Browsers upload straight to storage; MinIO has no per-bucket CORS API, only this setting.
+      MINIO_API_CORS_ALLOW_ORIGIN: "${MINIO_CORS_ORIGINS:-http://localhost:3000,http://127.0.0.1:3000}"
+    ports: ["9000:9000", "9001:9001"]
+    volumes: ["s3data:/bitnami/minio/data"]
+    healthcheck:
+      test: ["CMD", "curl", "-fs", "http://127.0.0.1:9000/minio/health/live"]
+      interval: 5s
+      retries: 20
+
+  seaweedfs:
+    image: chrislusf/seaweedfs:latest
+    command: server -s3 -s3.config=/etc/seaweedfs/s3.json -dir=/data -volume.max=0
+    ports: ["8333:8333"]
+    volumes:
+      - ./seaweedfs-s3.json:/etc/seaweedfs/s3.json:ro
+      - swdata:/data
+    profiles: ["seaweedfs"]
+
+  worker:
+    build: ../apps/worker
+    depends_on:
+      s3: { condition: service_healthy }
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@host.docker.internal:54322/postgres
+      S3_ENDPOINT: http://s3:9000
+      S3_REGION: us-east-1
+      S3_BUCKET: glimpse
+      S3_ACCESS_KEY_ID: glimpse
+      S3_SECRET_ACCESS_KEY: glimpse-secret
+      WORKER_TOKEN: dev-worker-token
+    ports: ["8787:8787"]
+    extra_hosts: ["host.docker.internal:host-gateway"]
+    profiles: ["worker"]
+
+volumes:
+  s3data:
+  swdata:

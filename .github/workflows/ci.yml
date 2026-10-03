@@ -1,0 +1,74 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  web:
+    name: Web (lint · typecheck · unit · build)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: pnpm }
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @glimpse/ui --filter @glimpse/web lint
+      - run: pnpm --filter @glimpse/ui --filter @glimpse/web --filter @glimpse/db typecheck
+      - run: pnpm --filter @glimpse/ui --filter @glimpse/web test
+      - name: Build
+        run: pnpm --filter @glimpse/web build
+        env:
+          # Placeholder values: the build must not need real services.
+          NEXT_PUBLIC_SUPABASE_URL: http://127.0.0.1:54321
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ci-placeholder-anon-key-000000
+          SUPABASE_SERVICE_ROLE_KEY: ci-placeholder-service-key-000000
+          S3_ENDPOINT: http://127.0.0.1:9000
+          S3_BUCKET: glimpse
+          S3_ACCESS_KEY_ID: ci
+          S3_SECRET_ACCESS_KEY: ci
+          WORKER_URL: http://127.0.0.1:8787
+          WORKER_TOKEN: ci-worker-token
+          GUEST_SECRET: ci-guest-secret-0000000000000000000000
+
+  worker:
+    name: Worker (ruff · mypy · pytest)
+    runs-on: ubuntu-latest
+    defaults:
+      run: { working-directory: apps/worker }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - run: uv sync --python 3.12
+      - run: uv run ruff check . && uv run ruff format --check .
+      - run: uv run mypy
+      - run: uv run pytest -q
+
+  integration:
+    name: Integration (Supabase + S3 + worker)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: supabase/setup-cli@v1
+        with: { version: latest }
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: pnpm }
+      - uses: astral-sh/setup-uv@v6
+      - run: pnpm install --frozen-lockfile
+      - name: Start Supabase
+        working-directory: packages/db
+        run: supabase start -x studio,imgproxy,edge-runtime,logflare,vector,supavisor
+      - name: Start S3 (MinIO)
+        run: docker compose -f infra/docker-compose.yml up -d --wait s3
+      - name: RLS tests
+        run: pnpm --filter @glimpse/db test
+      - name: Worker integration tests
+        working-directory: apps/worker
+        run: uv sync --python 3.12 && uv run pytest -q

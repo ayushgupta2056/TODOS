@@ -1,0 +1,93 @@
+# Render Blueprint — Glimpse on free plans (no card).
+#   Render: website + face worker.   Supabase (free): database, login, photo storage.
+# Step-by-step guide: docs/deploy-render.md
+#
+# Values marked `sync: false` are asked for when you create the Blueprint. Paste them from your
+# Supabase project. Never commit them.
+
+envVarGroups:
+  - name: glimpse-shared
+    envVars:
+      # Shared secret between the website and the worker's selfie endpoint (Render generates it).
+      - key: WORKER_TOKEN
+        generateValue: true
+      # Supabase Storage → S3 connection (Dashboard → Storage → S3 Connection → New access key)
+      - key: S3_ENDPOINT
+        sync: false # https://<project-ref>.storage.supabase.co/storage/v1/s3
+      - key: S3_REGION
+        sync: false # your project's region, e.g. ap-south-1
+      - key: S3_BUCKET
+        value: glimpse
+      - key: S3_ACCESS_KEY_ID
+        sync: false
+      - key: S3_SECRET_ACCESS_KEY
+        sync: false
+      # Alternative to an S3 access key: Supabase "session token" auth. Set S3_ACCESS_KEY_ID to the
+      # project ref, S3_SECRET_ACCESS_KEY to the anon key and this to the service_role key.
+      - key: S3_SESSION_TOKEN
+        sync: false
+
+services:
+  - type: web
+    name: glimpse-worker
+    runtime: docker
+    plan: free
+    region: singapore
+    dockerfilePath: ./apps/worker/Dockerfile
+    dockerContext: ./apps/worker
+    healthCheckPath: /healthz
+    # Only rebuild (and restart) the worker when its own code changes.
+    buildFilter:
+      paths:
+        - apps/worker/**
+    envVars:
+      - fromGroup: glimpse-shared
+      # Supabase → Connect → Session pooler (IPv4). Replace [YOUR-PASSWORD].
+      - key: DATABASE_URL
+        sync: false
+      # Free instances have 512 MB RAM: one face model copy at a time.
+      - key: CONCURRENCY
+        value: "1"
+
+  - type: web
+    name: glimpse-web
+    runtime: node
+    plan: free
+    region: singapore
+    buildCommand: corepack enable && pnpm install --frozen-lockfile && pnpm --filter @glimpse/web build
+    startCommand: pnpm --filter @glimpse/web start
+    healthCheckPath: /
+    buildFilter:
+      paths:
+        - apps/web/**
+        - packages/**
+        - package.json
+        - pnpm-lock.yaml
+        - pnpm-workspace.yaml
+        - turbo.json
+    envVars:
+      - fromGroup: glimpse-shared
+      - key: NODE_VERSION
+        value: "22"
+      # Supabase → Project Settings → API
+      - key: NEXT_PUBLIC_SUPABASE_URL
+        sync: false # https://<project-ref>.supabase.co
+      - key: NEXT_PUBLIC_SUPABASE_ANON_KEY
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      # The worker's public URL, shown at the top of the glimpse-worker service page.
+      - key: WORKER_URL
+        sync: false # e.g. https://glimpse-worker.onrender.com
+      - key: GUEST_SECRET
+        generateValue: true
+      # Supabase Storage: single uploads (no multipart), 50 MB per file on the free plan.
+      - key: NEXT_PUBLIC_UPLOAD_MULTIPART
+        value: "false"
+      - key: NEXT_PUBLIC_MAX_UPLOAD_MB
+        value: "50"
+      - key: MATCH_THRESHOLD
+        value: "0.42"
+      - key: CLUSTER_MATCH_THRESHOLD
+        value: "0.55"
+      # APP_URL defaults to Render's RENDER_EXTERNAL_URL; set it only if you add a custom domain.

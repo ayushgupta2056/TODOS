@@ -1,0 +1,26 @@
+Glimpse
+Copyright (c) 2026 the Glimpse authors. All rights reserved.
+
+This product includes third-party components under the licences below. Full texts are in /licenses.
+
+Face models (downloaded at build time from https://github.com/opencv/opencv_zoo, SHA-256 pinned)
+  - YuNet face detector (face_detection_yunet_2023mar.onnx)
+    Copyright (c) 2020 Shiqi Yu. MIT License. licenses/YuNet-MIT.txt
+  - SFace face recognizer (face_recognition_sface_2021dec.onnx)
+    Contributed by Yaoyao Zhong. Apache License 2.0. licenses/SFace-Apache-2.0.txt
+
+On-device selfie guidance (browser)
+  - MediaPipe Tasks Vision + BlazeFace short-range model, Copyright Google LLC. Apache License 2.0.
+
+Fonts
+  - Geist, Geist Mono. Copyright (c) 2023 Vercel, with basement.studio. SIL OFL 1.1. licenses/Geist-OFL-1.1.txt
+  - Instrument Serif. Copyright 2022 The Instrument Serif Project Authors. SIL OFL 1.1. licenses/InstrumentSerif-OFL-1.1.txt
+  - Barlow Condensed (design comparison only). Copyright 2017 The Barlow Project Authors. SIL OFL 1.1. licenses/BarlowCondensed-OFL-1.1.txt
+
+Libraries are used under their own permissive licences (MIT, Apache-2.0, BSD, ISC), including
+OpenCV (Apache-2.0), NumPy (BSD), Pillow (MIT-CMU), FastAPI (MIT), psycopg (LGPL-3.0, used as an
+unmodified dynamically-linked library), boto3 (Apache-2.0), Next.js (MIT), React (MIT), Radix UI (MIT),
+Motion (MIT), Uppy (MIT), aws4fetch (MIT), client-zip (MIT), Supabase clients (MIT), Zod (MIT).
+
+NOT used: InsightFace pretrained model packs (buffalo_l, antelopev2, …) — their weights are licensed
+for non-commercial research only.

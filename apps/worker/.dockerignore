@@ -1,0 +1,8 @@
+.venv
+models/*.onnx
+.pytest_cache
+.ruff_cache
+.mypy_cache
+eval/data
+tests
+__pycache__

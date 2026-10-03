@@ -1,0 +1,11 @@
+{
+  // Cloudflare Workers (free plan; commercial use allowed). See docs/deploy-cloudflare.md.
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "glimpse-web",
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2026-09-01",
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "assets": { "directory": ".open-next/assets", "binding": "ASSETS" },
+  "observability": { "enabled": true }
+  // Secrets: `wrangler secret put SUPABASE_SERVICE_ROLE_KEY` etc. (never commit them)
+}
